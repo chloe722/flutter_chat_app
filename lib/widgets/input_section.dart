@@ -14,6 +14,7 @@ class InputSection extends StatelessWidget {
     return TextField(
       onChanged: onChange,
       obscureText: obscureText,
+      textAlign: TextAlign.center,
       style: TextStyle(color: Colors.grey[900]),
       decoration: InputDecoration(
         hintStyle: TextStyle(color: Colors.grey),
