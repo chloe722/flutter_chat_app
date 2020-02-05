@@ -1,6 +1,6 @@
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
-import 'package:flash_chat/screens/strings.dart';
+import 'package:flash_chat/strings.dart';
 import 'package:flash_chat/widgets/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -73,22 +73,16 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             SizedBox(
               height: 48.0,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: RoundButton(
-                  color: Colors.lightBlueAccent,
-                  label: kLogin,
-                  onPressed: () =>
-                      Navigator.pushNamed(context, LoginScreen.id)),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: RoundButton(
-                  color: Colors.blueAccent,
-                  label: kRegister,
-                  onPressed: () =>
-                      Navigator.pushNamed(context, RegistrationScreen.id)),
-            ),
+            RoundButton(
+                color: Colors.lightBlueAccent,
+                label: kLogin,
+                onPressed: () =>
+                    Navigator.pushNamed(context, LoginScreen.id)),
+            RoundButton(
+                color: Colors.blueAccent,
+                label: kRegister,
+                onPressed: () =>
+                    Navigator.pushNamed(context, RegistrationScreen.id)),
           ],
         ),
       ),

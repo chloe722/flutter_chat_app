@@ -1,4 +1,6 @@
-import 'package:flash_chat/screens/strings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/auth.dart';
+import 'package:flash_chat/strings.dart';
 import 'package:flash_chat/widgets/input_section.dart';
 import 'package:flash_chat/widgets/round_button.dart';
 import 'package:flutter/material.dart';
@@ -52,13 +54,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(
               height: 24.0,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: RoundButton(
-                  color: Colors.blueAccent,
-                  label: kRegister,
-                  onPressed: () => print('add later')),
-            ),
+            RoundButton(
+                color: Colors.blueAccent,
+                label: kRegister,
+                onPressed: () {}),
           ],
         ),
       ),

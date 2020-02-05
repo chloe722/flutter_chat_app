@@ -1,7 +1,11 @@
-import 'package:flash_chat/screens/strings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/auth.dart';
+import 'package:flash_chat/screens/profile_screen.dart';
+import 'package:flash_chat/strings.dart';
 import 'package:flash_chat/widgets/input_section.dart';
 import 'package:flash_chat/widgets/round_button.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   static const id = 'login_screen';
@@ -11,6 +15,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,13 +58,40 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: 24.0,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: RoundButton(
-                  color: Colors.lightBlueAccent,
-                  label: kLogin,
-                  onPressed: () => print('add later')),
+            RoundButton(
+                color: Colors.lightBlueAccent,
+                label: kLogin,
+                onPressed: () => print('123')),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    height: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text('or', style: TextStyle(color: Colors.grey)),
+                ),
+                Expanded(
+                  child: Container(
+                    height: 1,
+                    color: Colors.grey,
+                  ),
+                )
+              ],
             ),
+            RoundButton(
+                color: Colors.deepOrangeAccent,
+                label: kGoogleLogin,
+                onPressed: () => handleSignIn().then((FirebaseUser user) {
+                  print(user);
+                  Navigator.pushNamed(context, ProfileScreen.id, arguments: user);
+                }).catchError((e)=>print(e))),
+
           ],
         ),
       ),
