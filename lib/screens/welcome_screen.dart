@@ -1,3 +1,4 @@
+import 'package:flash_chat/auth.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
 import 'package:flash_chat/strings.dart';
@@ -5,8 +6,19 @@ import 'package:flash_chat/widgets/round_button.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
+enum AuthState {
+  NOT_DETERMINED,
+  NOT_LOGGED_IN,
+  LOGGED_IN,
+}
+
 class WelcomeScreen extends StatefulWidget {
   static String id = 'welcome_screen';
+
+  WelcomeScreen({this.auth, this.logInCallback});
+
+  final BaseAuth auth;
+  final VoidCallback logInCallback;
 
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
@@ -20,6 +32,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   void initState() {
     super.initState();
+
     controller =
         AnimationController(duration: const Duration(seconds: 3), vsync: this);
     animation =
@@ -76,13 +89,23 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             RoundButton(
                 color: Colors.lightBlueAccent,
                 label: kLogin,
-                onPressed: () =>
-                    Navigator.pushNamed(context, LoginScreen.id)),
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LoginScreen(
+                              auth: widget.auth,
+                              logInCallback: widget.logInCallback,
+                            )))),
             RoundButton(
                 color: Colors.blueAccent,
                 label: kRegister,
-                onPressed: () =>
-                    Navigator.pushNamed(context, RegistrationScreen.id)),
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RegistrationScreen(
+                              auth: widget.auth,
+                              logInCallback: widget.logInCallback,
+                            )))),
           ],
         ),
       ),

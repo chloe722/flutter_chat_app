@@ -8,11 +8,46 @@ import 'package:flutter/material.dart';
 class RegistrationScreen extends StatefulWidget {
   static String id = 'registeration_screen';
 
+  RegistrationScreen({this.auth, this.logInCallback});
+
+  final BaseAuth auth;
+  final VoidCallback logInCallback;
+
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  String email = "";
+  String password = "";
+  FirebaseUser _user;
+  String _errorMsg = "";
+  bool _isLoading = true;
+
+  void submit() async {
+    setState(() {
+      _errorMsg = "";
+      _isLoading = true;
+    });
+
+    try {
+      _user = await widget.auth.register(email: email, password: password);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (_user != null && _user.uid != null && _user.uid.length > 0) {
+        widget.logInCallback();
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print(e);
+      _isLoading = false;
+      _errorMsg = e.toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +72,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               hint: kEnterEmailHint,
               color: Colors.blueAccent,
               onChange: (value) {
-                print('email: ' + value);
+                email = value;
               },
             ),
             SizedBox(
@@ -48,7 +83,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               color: Colors.blueAccent,
               obscureText: true,
               onChange: (value) {
-                print('pwd: ' + value);
+                password = value;
               },
             ),
             SizedBox(
@@ -57,7 +92,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             RoundButton(
                 color: Colors.blueAccent,
                 label: kRegister,
-                onPressed: () {}),
+                onPressed: () => submit()),
           ],
         ),
       ),
