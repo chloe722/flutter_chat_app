@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/auth.dart';
+import 'package:flash_chat/screens/home_screen.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,7 @@ class _RootScreenState extends State<RootScreen> {
 
       case AuthStatus.LOGGED_IN:
         if (_user != null  && _user.uid != null && _user.uid.length> 0) {
-          return ProfileScreen(user: _user,logOutCallback: logoutCallback);
+          return HomeScreen(user: _user, logOutCallback: logoutCallback);
         } else {
           return CircularProgressIndicator();
         }
