@@ -83,6 +83,10 @@ class ScanResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
+    print("UUID: ${result.advertisementData.serviceUuids}");
+
     return ExpansionTile(
       title: _buildTitle(context),
       leading: Text(result.rssi.toString()),

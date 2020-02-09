@@ -30,6 +30,7 @@ class BluetoothOffScreen extends StatelessWidget {
 
   final BluetoothState state;
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,6 +73,14 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
     super.initState();
   }
 
+  void checkService(BluetoothDevice device) async {
+    List<BluetoothService> services = await device.discoverServices();
+    services.forEach((service) {
+      print(service);
+      // do something with service
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +101,6 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
               return FloatingActionButton(
                   child: Icon(Icons.bluetooth_searching),
                   onPressed: () {
-                    print('pressed');
                     flutterBlue.startScan(timeout: Duration(minutes: 1));
                   });
             }
@@ -119,10 +127,13 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
                         if (snapshot.data == BluetoothDeviceState.connected) {
                           return RaisedButton(
                             child: Text('Check'),
-                            onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        DeviceScreen(device: d))),
+                            onPressed: () {
+                              checkService(d);
+                              return Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DeviceScreen(device: d)));
+                            }
                           );
                         }
                         return Text(snapshot.data.toString());
@@ -135,20 +146,22 @@ class _BluetoothScreenState extends State<BluetoothScreen> {
             StreamBuilder<List<ScanResult>>(
               stream: flutterBlue.scanResults,
               initialData: [],
-              builder: (context, snapshot) => Column(
-                mainAxisSize: MainAxisSize.max,
-                children: snapshot.data.map((r) {
-                  print('data: ${r.device.name}');
-                  return ScanResultTile(
-                    result: r,
-                    onTap: () => Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      r.device.connect();
-                      return DeviceScreen(device: r.device);
-                    })),
-                  );
-                }).toList(),
-              ),
+              builder: (context, snapshot) {
+
+                return Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: snapshot.data.map((r) {
+                    return ScanResultTile(
+                      result: r,
+                      onTap: () => Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        r.device.connect();
+                        return DeviceScreen(device: r.device);
+                      })),
+                    );
+                  }).toList(),
+                );
+              }
             )
           ],
         ),
