@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/auth.dart';
 import 'package:flash_chat/screens/bluetooth_screen.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
+import 'package:flash_chat/screens/friends_screen.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     screens = [
-      ChatScreen(),
+//      ChatScreen(),
+      FriendsScreen(),
       ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
       BluetoothRoot(),
     ];

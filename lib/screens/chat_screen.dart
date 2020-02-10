@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
@@ -9,6 +10,13 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,7 +33,12 @@ class _ChatScreenState extends State<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
 
           children: <Widget>[
+            SingleChildScrollView(child: Column(
 
+              children: <Widget>[
+                ChatBubbleTile(),
+              ],
+            )),
             Expanded(
                 child: Align(
                   alignment: FractionalOffset.bottomCenter,
@@ -42,13 +55,16 @@ class ChatBubbleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6.0),
+      shape: BoxShape.rectangle,
+      border: Border.all(style: BorderStyle.solid, color: Colors.grey),
+      ),
+      child: Text("test", softWrap: true),
 
     );
   }
 }
-
-
-
 
 
 class WriteMessageTile extends StatelessWidget {
