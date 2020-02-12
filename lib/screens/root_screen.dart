@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/auth.dart';
 import 'package:flash_chat/screens/home_screen.dart';
-import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
+import 'package:flash_chat/user.dart';
 import 'package:flutter/material.dart';
 
 enum AuthStatus {
@@ -29,7 +29,7 @@ class _RootScreenState extends State<RootScreen> {
     widget.auth.getCurrentUser().then((user){
       setState(() {
         _user = user;
-
+        updateUserFromFirebaseUser(user);
       });
     });
 

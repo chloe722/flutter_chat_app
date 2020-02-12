@@ -1,7 +1,6 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:flash_chat/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flash_chat/constants.dart';
 
 class ChatScreen extends StatefulWidget {
   static String id = 'chat_screen';

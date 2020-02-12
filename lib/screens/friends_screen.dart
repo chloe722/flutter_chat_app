@@ -1,20 +1,38 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 
 class FriendsScreen extends StatelessWidget {
+  FriendsScreen({this.user});
+
+  final FirebaseUser user;
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.orangeAccent,
       body: Center(
         child: Container(
-          child: ListView(
-            children: <Widget>[
-              FriendTile(),
-              FriendTile(),
-              FriendTile()
+          child: StreamBuilder<QuerySnapshot>(
+            stream: Firestore.instance.collection('users').snapshots(),
+            builder: (context, snapshot) {
 
-            ],
+              if (!snapshot.hasData) {
+
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+
+              } else {
+                return ListView.builder(
+                  itemCount: snapshot.data.documents.length,
+                  itemBuilder: (context, index) => FriendTile(snapshot: snapshot.data.documents[index],),
+                );
+              }
+            }
           ),
         ),
       ),
@@ -24,6 +42,12 @@ class FriendsScreen extends StatelessWidget {
 
 
 class FriendTile extends StatelessWidget {
+  FriendTile({this.snapshot});
+
+  final DocumentSnapshot snapshot;
+
+
+
   @override
   Widget build(BuildContext context) {
     return Card(

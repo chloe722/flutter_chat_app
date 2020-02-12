@@ -1,14 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flash_chat/auth.dart';
 import 'package:flash_chat/screens/bluetooth_screen.dart';
-import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flash_chat/screens/friends_screen.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({this.user, this.logOutCallback});
-
 
   final FirebaseUser user;
   final VoidCallback logOutCallback;
@@ -18,19 +15,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _selectedIndex = 0;
   List<Widget> screens;
 
   @override
   void initState() {
     screens = [
-//      ChatScreen(),
       FriendsScreen(),
       ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
       BluetoothRoot(),
     ];
-
     super.initState();
   }
 
@@ -46,9 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(title: Text("Chat"), icon: Icon(Icons.chat_bubble)),
-          BottomNavigationBarItem(title: Text("Profile"), icon: Icon(Icons.person)),
-          BottomNavigationBarItem(title: Text("Bluetooth"), icon: Icon(Icons.bluetooth)),
+          BottomNavigationBarItem(
+              title: Text("Chat"), icon: Icon(Icons.chat_bubble)),
+          BottomNavigationBarItem(
+              title: Text("Profile"), icon: Icon(Icons.person)),
+          BottomNavigationBarItem(
+              title: Text("Bluetooth"), icon: Icon(Icons.bluetooth)),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemSelected,
