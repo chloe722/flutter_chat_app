@@ -27,7 +27,7 @@ class FriendsScreen extends StatelessWidget {
               } else {
                 return ListView.builder(
                   itemCount: snapshot.data.documents.length,
-                  itemBuilder: (context, index) => FriendTile(snapshot: snapshot.data.documents[index],),
+                  itemBuilder: (context, index) => FriendTile(snapshot: snapshot.data.documents[index],user: user,),
                 );
               }
             }
@@ -40,9 +40,10 @@ class FriendsScreen extends StatelessWidget {
 
 
 class FriendTile extends StatelessWidget {
-  FriendTile({this.snapshot});
+  FriendTile({this.snapshot, this.user});
 
   final DocumentSnapshot snapshot;
+  final FirebaseUser user;
 
 
 
@@ -53,7 +54,7 @@ class FriendTile extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen())),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(user))),
         isThreeLine: true,
         trailing: Icon(Icons.person),
         leading: Container(

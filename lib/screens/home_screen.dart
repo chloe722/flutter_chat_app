@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     screens = [
-      FriendsScreen(),
+      FriendsScreen(user: widget.user,),
       ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
       BluetoothRoot(),
     ];
