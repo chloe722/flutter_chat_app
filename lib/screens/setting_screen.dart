@@ -12,24 +12,28 @@ class SettingScreen extends StatelessWidget {
   final FirebaseUser user;
   String name;
 
-
   void save(BuildContext context) {
-    updateProfileData(user: user, name: name).then((e) => Navigator.pop(context));
+    updateProfileData(user: user, name: name)
+        .then((e) => Navigator.pop(context));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Container(
-      child: Column(
-        children: <Widget>[
-          InputSection(
-            hint: user.displayName,
-            color: Colors.lightBlueAccent,
-            onChange: (value) => name = value,
-          ),
-          SizedBox(
-            height: 8.0,
-          ),
+    return Scaffold(
+        body: Center(
+          child: Container(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            InputSection(
+              hint: user.displayName,
+              color: Colors.lightBlueAccent,
+              onChange: (value) => name = value,
+            ),
+            SizedBox(
+              height: 8.0,
+            ),
 //          InputSection(
 //            hint: kEnterPwdHint,
 //            color: Colors.lightBlueAccent,
@@ -38,14 +42,15 @@ class SettingScreen extends StatelessWidget {
 //            },
 //          ),
 
-          SizedBox(
-            height: 24.0,
-          ),
-          RoundButton(
-              color: Colors.blueAccent,
-              label: kSave,
-              onPressed: () => save(context))
-        ],
+            SizedBox(
+              height: 24.0,
+            ),
+            RoundButton(
+                color: Colors.blueAccent,
+                label: kSave,
+                onPressed: () => save(context))
+          ],
+        ),
       ),
     ));
   }

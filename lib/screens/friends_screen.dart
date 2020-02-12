@@ -8,8 +8,6 @@ class FriendsScreen extends StatelessWidget {
 
   final FirebaseUser user;
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
