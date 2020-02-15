@@ -3,15 +3,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 
-class FriendsScreen extends StatelessWidget {
-  FriendsScreen({this.user});
+class RecentChatsScreen extends StatelessWidget {
+  RecentChatsScreen({this.user});
 
   final FirebaseUser user;
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orangeAccent,
+      appBar: AppBar(
+      backgroundColor: Colors.orangeAccent),
       body: Center(
         child: Container(
           child: StreamBuilder<QuerySnapshot>(
@@ -19,7 +21,6 @@ class FriendsScreen extends StatelessWidget {
             builder: (context, snapshot) {
 
               if (!snapshot.hasData) {
-
                 return Center(
                   child: CircularProgressIndicator(),
                 );
@@ -27,7 +28,7 @@ class FriendsScreen extends StatelessWidget {
               } else {
                 return ListView.builder(
                   itemCount: snapshot.data.documents.length,
-                  itemBuilder: (context, index) => FriendTile(snapshot: snapshot.data.documents[index],user: user,),
+                  itemBuilder: (context, index) => ChatTile(snapshot: snapshot.data.documents[index],user: user,),
                 );
               }
             }
@@ -39,13 +40,11 @@ class FriendsScreen extends StatelessWidget {
 }
 
 
-class FriendTile extends StatelessWidget {
-  FriendTile({this.snapshot, this.user});
+class ChatTile extends StatelessWidget {
+  ChatTile({this.snapshot, this.user});
 
   final DocumentSnapshot snapshot;
   final FirebaseUser user;
-
-
 
   @override
   Widget build(BuildContext context) {

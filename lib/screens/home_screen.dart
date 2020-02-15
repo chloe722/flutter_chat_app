@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/screens/bluetooth_screen.dart';
-import 'package:flash_chat/screens/friends_screen.dart';
+import 'package:flash_chat/screens/recent_chats_screen.dart';
+import 'package:flash_chat/screens/friend_screen.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     screens = [
-      FriendsScreen(user: widget.user,),
+      RecentChatsScreen(user: widget.user,),
+      FriendsScreen(user: widget.user),
       ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
       BluetoothRoot(),
     ];
@@ -42,6 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
         items: [
           BottomNavigationBarItem(
               title: Text("Chat"), icon: Icon(Icons.chat_bubble)),
+          BottomNavigationBarItem(
+              title: Text("Friend"), icon: Icon(Icons.people)),
           BottomNavigationBarItem(
               title: Text("Profile"), icon: Icon(Icons.person)),
           BottomNavigationBarItem(

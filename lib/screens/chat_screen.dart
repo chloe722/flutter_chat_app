@@ -35,7 +35,9 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         body: Column(
           children: <Widget>[
-            MessageStream(user: widget.user,),
+            MessageStream(
+              user: widget.user,
+            ),
             Align(
                 alignment: FractionalOffset.bottomCenter,
                 child:
@@ -52,11 +54,14 @@ class MessageStream extends StatelessWidget {
 
   final FirebaseUser user;
 
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: firestore.collection("chat").reference().orderBy('timestamp', descending: true).snapshots(),
+        stream: firestore
+            .collection("chat")
+            .reference()
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
         builder: (context, snapshot) {
           var data = snapshot.data;
           switch (snapshot.connectionState) {
@@ -71,12 +76,12 @@ class MessageStream extends StatelessWidget {
                           itemCount: data.documents.length,
                           itemBuilder: (c, i) {
                             return ChatBubble(
-                              isMe: user.email == data.documents[i].data["sender"],
+                              isMe: user.email ==
+                                  data.documents[i].data["sender"],
                               text: data.documents[i].data["text"],
                               sender: data.documents[i].data["sender"],
                             );
-                          }
-              ),
+                          }),
                     )
                   : Text("Loading");
           }
@@ -96,18 +101,19 @@ class ChatBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       child: Column(
-        crossAxisAlignment: isMe? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
           Text(sender ?? ""),
           SizedBox(height: 5.0),
           Material(
             borderRadius: BorderRadius.only(
-                topRight: Radius.circular(isMe? 0.0 : 30.0),
-                topLeft: Radius.circular(isMe? 30.0: 0.0),
+                topRight: Radius.circular(isMe ? 0.0 : 30.0),
+                topLeft: Radius.circular(isMe ? 30.0 : 0.0),
                 bottomLeft: Radius.circular(30.0),
                 bottomRight: Radius.circular(30.0)),
             elevation: 1.0,
-            color: isMe? Colors.orangeAccent[200] : Colors.grey[100],
+            color: isMe ? Colors.orangeAccent[200] : Colors.grey[100],
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(text ?? "", softWrap: true),

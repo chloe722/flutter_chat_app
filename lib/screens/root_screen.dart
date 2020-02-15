@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/auth.dart';
+import 'package:flash_chat/database.dart';
 import 'package:flash_chat/screens/home_screen.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flash_chat/user.dart';

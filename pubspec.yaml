@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  intl: ^0.16.1
+  intl: ^0.16.0
   cupertino_icons: ^0.1.2
   animated_text_kit: ^2.0.0
   firebase_core: ^0.4.0+9
@@ -28,8 +28,9 @@ dependencies:
 
 
 dev_dependencies:
-  flutter_test:
+  flutter_driver:
     sdk: flutter
+  #   test: any
 
 flutter:
   uses-material-design: true

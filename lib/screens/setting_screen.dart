@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/database.dart';
 import 'package:flash_chat/strings.dart';
 import 'package:flash_chat/widgets/input_section.dart';
 import 'package:flash_chat/widgets/round_button.dart';
