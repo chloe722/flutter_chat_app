@@ -29,25 +29,27 @@ class _HomeScreenState extends State<HomeScreen> {
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-            bottom: TabBar(
-              indicator: CustomTabIndicator(),
-              indicatorSize: TabBarIndicatorSize.label,
-              tabs: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
-                  child: Tab(icon: Icon(Icons.chat, color: kBrown,)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
-                  child: Tab(icon: Icon(Icons.people, color: kBrown)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
-                  child: Tab(icon: Icon(Icons.person, color: kBrown)),
-                )
-              ],
+            flexibleSpace: SafeArea(
+              child: TabBar(
+                indicator: CustomTabIndicator(),
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+                    child: Tab(icon: Icon(Icons.chat, color: kBrown,)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+                    child: Tab(icon: Icon(Icons.people, color: kBrown)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+                    child: Tab(icon: Icon(Icons.person, color: kBrown)),
+                  )
+                ],
+              ),
             ),
-          ),
+            ),
           body: TabBarView(
             children: <Widget>[
               RecentChatsScreen(user: widget.user,),
