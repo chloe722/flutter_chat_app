@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -8,18 +9,15 @@ class RecentChatsScreen extends StatelessWidget {
 
   final FirebaseUser user;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      backgroundColor: Colors.orangeAccent),
+      backgroundColor: kDodgerBlue,
       body: Center(
         child: Container(
           child: StreamBuilder<QuerySnapshot>(
             stream: Firestore.instance.collection('users').snapshots(),
             builder: (context, snapshot) {
-
               if (!snapshot.hasData) {
                 return Center(
                   child: CircularProgressIndicator(),

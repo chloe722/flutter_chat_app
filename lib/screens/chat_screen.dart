@@ -1,8 +1,18 @@
+
+import 'dart:async';
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Path;
+
+
 
 Firestore firestore = Firestore.instance;
 
@@ -17,21 +27,54 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  @override
-  void initState() {
-    super.initState();
+
+  //0 = message, 1=image, 2=sticker
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    print("image file: $image");
+
+    if (image != null) {
+      uploadFile(image);
+    } else {
+      print('Uploaded failed');
+    }
+  }
+
+  Future uploadFile(File image) async {
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('chats/${Path.basename(image.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(image);
+    await uploadTask.onComplete;
+    print('File Uploaded');
+    storageReference.getDownloadURL().then((url) {
+      setState(() {
+        print('image url: $url');
+        sendImage(url);
+      });
+    });
+  }
+
+  void sendImage(String image) {
+    firestore.collection('chat').add({
+      'timestamp': FieldValue.serverTimestamp(),
+      'type': 1,
+      'sender': widget.user.email,
+      'content': image,
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       child: Scaffold(
-        backgroundColor: Colors.amber[100],
+        backgroundColor: kDodgerBlue,
         appBar: AppBar(
           leading: null,
           title: Text('️Chat'),
           centerTitle: true,
-          backgroundColor: Colors.lightBlueAccent,
+          backgroundColor: kFirebrick,
         ),
         body: Column(
           children: <Widget>[
@@ -41,7 +84,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Align(
                 alignment: FractionalOffset.bottomCenter,
                 child:
-                    InputMessageTile(user: widget.user, firestore: firestore)),
+                    InputMessageTile(user: widget.user, firestore: firestore, getImage: getImage,)),
           ],
         ),
       ),
@@ -78,7 +121,8 @@ class MessageStream extends StatelessWidget {
                             return ChatBubble(
                               isMe: user.email ==
                                   data.documents[i].data["sender"],
-                              text: data.documents[i].data["text"],
+                              type: data.documents[i].data["type"],
+                              content: data.documents[i].data["content"],
                               sender: data.documents[i].data["sender"],
                             );
                           }),
@@ -90,14 +134,59 @@ class MessageStream extends StatelessWidget {
 }
 
 class ChatBubble extends StatelessWidget {
-  ChatBubble({this.text, this.sender, this.isMe});
+  ChatBubble({this.content, this.sender, this.type, this.isMe});
 
-  final String text;
+  //0 = message, 1=sticker, 2=image
+
+  final String content;
   final String sender;
+  final int type;
   final bool isMe;
+
+  Widget _buildText() {
+    return Material(
+      borderRadius: BorderRadius.only(
+          topRight: Radius.circular(isMe ? 0.0 : 30.0),
+          topLeft: Radius.circular(isMe ? 30.0 : 0.0),
+          bottomLeft: Radius.circular(30.0),
+          bottomRight: Radius.circular(30.0)),
+      elevation: 1.0,
+      color: isMe ? Colors.amber[300] : Colors.grey[100],
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(content ?? "", softWrap: true),
+      ),
+    );
+  }
+
+  Widget _builtImage() {
+    return CachedNetworkImage(
+        placeholder: (context, url) => Container(
+            height: 100.0,
+            width: 100.0,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Center(child: CircularProgressIndicator())),
+        errorWidget: (context, url, error) => Material(
+          child: Text('Image is not available'),
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        width: 200.0,
+        height: 200.0,
+        fit: BoxFit.cover,
+        imageUrl: content);
+  }
+
+
+  Widget _builtSticker() {
+    //TODO
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       child: Column(
@@ -106,19 +195,8 @@ class ChatBubble extends StatelessWidget {
         children: <Widget>[
           Text(sender ?? ""),
           SizedBox(height: 5.0),
-          Material(
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(isMe ? 0.0 : 30.0),
-                topLeft: Radius.circular(isMe ? 30.0 : 0.0),
-                bottomLeft: Radius.circular(30.0),
-                bottomRight: Radius.circular(30.0)),
-            elevation: 1.0,
-            color: isMe ? Colors.orangeAccent[200] : Colors.grey[100],
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(text ?? "", softWrap: true),
-            ),
-          ),
+          if(type == 0) _buildText(),
+          if(type == 1) _builtImage()
         ],
       ),
     );
@@ -126,20 +204,25 @@ class ChatBubble extends StatelessWidget {
 }
 
 class InputMessageTile extends StatelessWidget {
-  InputMessageTile({this.firestore, this.user});
+  InputMessageTile({this.firestore, this.user, this.getImage});
 
   final messageTextEditingController = TextEditingController();
 
   final Firestore firestore;
   final FirebaseUser user;
   String text;
+  Function getImage;
+  int type = 0; //default
+
+  //0 = message, 1=image, 2=sticker
 
   void send() {
     messageTextEditingController.clear();
     firestore.collection('chat').add({
       'timestamp': FieldValue.serverTimestamp(),
+      'type': 0,
       'sender': user.email,
-      'text': text,
+      'content': text,
     });
   }
 
@@ -149,9 +232,21 @@ class InputMessageTile extends StatelessWidget {
       decoration: kMessageContainerDecoration,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
+          Material(
+            child: InkWell(
+              onTap: () => getImage(),
+              child: Center(
+                child: Icon(
+                  Icons.image,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+          ),
           Expanded(
+            flex: 1,
             child: TextField(
               controller: messageTextEditingController,
               onChanged: (value) => text = value,
@@ -160,11 +255,17 @@ class InputMessageTile extends StatelessWidget {
               decoration: kMessageTextFieldDecoration,
             ),
           ),
-          FlatButton(
-            onPressed: () => send(),
-            child: Icon(
-              Icons.send,
-              color: Colors.grey,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: Material(
+              child: InkWell(
+                splashColor: Colors.grey[200],
+                onTap: () => send(),
+                child: Icon(
+                  Icons.send,
+                  color: kDodgerBlue,
+                ),
+              ),
             ),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +28,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
           ),
         ],
       ),
-      backgroundColor: Colors.orangeAccent,
+      backgroundColor: kNavajowhite,
       body: Center(
         child: Column(
           children: <Widget>[

@@ -38,3 +38,10 @@ const kTextFieldDecoration = InputDecoration(
   ),
 
 );
+
+
+const Color kDodgerBlue = Color(0xFF36a5dd);
+const Color kBurlywook = Color(0xFFe6a88b);
+const Color kNavajowhite = Color(0xFFfad1af);
+const Color kFirebrick = Color(0xFF9c1913);
+const Color kOliverdrib = Color(0xFF6ab440);
