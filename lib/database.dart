@@ -49,7 +49,7 @@ void confirmFiend({FirebaseUser user, String friendId}) {
 }
 
 void rejectFriendRequest({FirebaseUser user, String friendId}) {
-  Firestore.instance.document('users2/${user.uid}/request/$friendId').delete();
+  Firestore.instance.document('friend_request_to/${user.uid}/from/$friendId').delete();
 }
 
 
@@ -61,9 +61,16 @@ void deleteFriend({FirebaseUser user, String friendId}) {
 
 void addFriend({FirebaseUser user, String friendId}) {
 
-  Firestore.instance.document('users2/$friendId/request/${user.uid}').setData({
+  Firestore.instance.document('friend_request_to/$friendId/from/${user.uid}').setData({
     'name' : user.displayName,
     'email' : user.email
   });
 }
 
+CollectionReference getFriendRequest(FirebaseUser user){
+  return Firestore.instance.collection('friend_request_to/${user.uid}/from');
+}
+
+CollectionReference getFriendList(FirebaseUser user){
+  return  Firestore.instance.collection('users2/${user.uid}/friends');
+}

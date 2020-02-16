@@ -35,9 +35,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
             Container(
               margin: EdgeInsets.symmetric(vertical: 16.0),
               child: StreamBuilder<QuerySnapshot>(
-                  stream: Firestore.instance
-                      .collection('users2/${widget.user.uid}/request')
-                      .snapshots(),
+                  stream: getFriendRequest(widget.user).snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Center(
@@ -64,9 +62,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
             Container(
               margin: EdgeInsets.symmetric(vertical: 16.0),
               child: StreamBuilder<QuerySnapshot>(
-                  stream: Firestore.instance
-                      .collection('users2/${widget.user.uid}/friends')
-                      .snapshots(),
+                  stream: getFriendList(widget.user).snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Center(
