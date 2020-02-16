@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -47,21 +48,10 @@ class _ChatScreenState extends State<ChatScreen> {
         .child('chats/${Path.basename(image.path)}');
     StorageUploadTask uploadTask = storageReference.putFile(image);
     await uploadTask.onComplete;
-    print('File Uploaded');
     storageReference.getDownloadURL().then((url) {
       setState(() {
-        print('image url: $url');
-        sendImage(url);
+        sendContent(type: 1, sender: widget.user.email, content: url);
       });
-    });
-  }
-
-  void sendImage(String image) {
-    firestore.collection('chat').add({
-      'timestamp': FieldValue.serverTimestamp(),
-      'type': 1,
-      'sender': widget.user.email,
-      'content': image,
     });
   }
 
@@ -196,7 +186,8 @@ class ChatBubble extends StatelessWidget {
           Text(sender ?? ""),
           SizedBox(height: 5.0),
           if(type == 0) _buildText(),
-          if(type == 1) _builtImage()
+          if(type == 1) _builtImage(),
+          if(type == 2) _builtSticker(),
         ],
       ),
     );
@@ -212,18 +203,12 @@ class InputMessageTile extends StatelessWidget {
   final FirebaseUser user;
   String text;
   Function getImage;
-  int type = 0; //default
 
   //0 = message, 1=image, 2=sticker
 
-  void send() {
+  void _send() {
     messageTextEditingController.clear();
-    firestore.collection('chat').add({
-      'timestamp': FieldValue.serverTimestamp(),
-      'type': 0,
-      'sender': user.email,
-      'content': text,
-    });
+    sendContent(type: 0, sender: user.email, content: text);
   }
 
   @override
@@ -260,7 +245,7 @@ class InputMessageTile extends StatelessWidget {
             child: Material(
               child: InkWell(
                 splashColor: Colors.grey[200],
-                onTap: () => send(),
+                onTap: () => _send(),
                 child: Icon(
                   Icons.send,
                   color: kDodgerBlue,
