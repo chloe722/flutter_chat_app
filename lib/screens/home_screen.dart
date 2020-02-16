@@ -3,6 +3,7 @@ import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/friend_screen.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flash_chat/screens/recent_chats_screen.dart';
+import 'package:flash_chat/widgets/custom_tab_indicator.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,21 +25,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.light().copyWith(
-        primaryColor: kFirebrick,
-      ),
-      home: DefaultTabController(
+    return DefaultTabController(
         length: 3,
         child: Scaffold(
           appBar: AppBar(
-
             bottom: TabBar(
-              indicatorColor: Colors.white,
+              indicator: CustomTabIndicator(),
+              indicatorSize: TabBarIndicatorSize.label,
               tabs: <Widget>[
-                Tab(icon: Icon(Icons.chat_bubble)),
-                Tab(icon: Icon(Icons.people)),
-                Tab(icon: Icon(Icons.person))
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+                  child: Tab(icon: Icon(Icons.chat, color: kBrown,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+                  child: Tab(icon: Icon(Icons.people, color: kBrown)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+                  child: Tab(icon: Icon(Icons.person, color: kBrown)),
+                )
               ],
             ),
           ),
@@ -50,7 +56,41 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           )
         ),
-      ),
-    );
+      );
   }
 }
+
+//
+//class CustomTabBar extends StatelessWidget implements PreferredSizeWidget {
+//  @override
+//  Widget build(BuildContext context) {
+//    return Container(
+//
+//      decoration: BoxDecoration(
+//        borderRadius: new BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
+//      ),
+//      child: TabBar(
+//        indicator: CustomTabIndicator(),
+//        indicatorSize: TabBarIndicatorSize.label,
+//        tabs: <Widget>[
+//          Padding(
+//            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+//            child: Tab(icon: Icon(Icons.chat, color: Colors.blueGrey,)),
+//          ),
+//          Padding(
+//            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+//            child: Tab(icon: Icon(Icons.people, color: Colors.blueGrey)),
+//          ),
+//          Padding(
+//            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+//            child: Tab(icon: Icon(Icons.person, color: Colors.blueGrey)),
+//          )
+//        ],
+//      ),
+//    );
+//  }
+//
+//  @override
+//  // TODO: implement preferredSize
+//  Size get preferredSize => const Size.fromHeight(40.0);
+//}

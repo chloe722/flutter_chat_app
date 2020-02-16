@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:io';
 
@@ -13,8 +12,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Path;
 
-
-
 Firestore firestore = Firestore.instance;
 
 class ChatScreen extends StatefulWidget {
@@ -28,7 +25,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-
   //0 = message, 1=image, 2=sticker
 
   Future getImage() async {
@@ -62,9 +58,10 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: kDodgerBlue,
         appBar: AppBar(
           leading: null,
-          title: Text('️Chat'),
+          title: Text('️Chat', style: kAppBarTextStyle,),
+          iconTheme: IconThemeData(color: kBrown),
           centerTitle: true,
-          backgroundColor: kFirebrick,
+          backgroundColor: Colors.amber,
         ),
         body: Column(
           children: <Widget>[
@@ -73,8 +70,11 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             Align(
                 alignment: FractionalOffset.bottomCenter,
-                child:
-                    InputMessageTile(user: widget.user, firestore: firestore, getImage: getImage,)),
+                child: InputMessageTile(
+                  user: widget.user,
+                  firestore: firestore,
+                  getImage: getImage,
+                )),
           ],
         ),
       ),
@@ -160,15 +160,14 @@ class ChatBubble extends StatelessWidget {
             ),
             child: Center(child: CircularProgressIndicator())),
         errorWidget: (context, url, error) => Material(
-          child: Text('Image is not available'),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
+              child: Text('Image is not available'),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
         width: 200.0,
         height: 200.0,
         fit: BoxFit.cover,
         imageUrl: content);
   }
-
 
   Widget _builtSticker() {
     //TODO
@@ -176,7 +175,6 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       child: Column(
@@ -185,9 +183,9 @@ class ChatBubble extends StatelessWidget {
         children: <Widget>[
           Text(sender ?? ""),
           SizedBox(height: 5.0),
-          if(type == 0) _buildText(),
-          if(type == 1) _builtImage(),
-          if(type == 2) _builtSticker(),
+          if (type == 0) _buildText(),
+          if (type == 1) _builtImage(),
+          if (type == 2) _builtSticker(),
         ],
       ),
     );
@@ -211,6 +209,25 @@ class InputMessageTile extends StatelessWidget {
     sendContent(type: 0, sender: user.email, content: text);
   }
 
+  void _getGiphy() {
+    print('get stickers');
+    
+  }
+
+  Widget _buildCustomButton({IconData icon, Color color, Function onTap}) {
+    return Material(
+      child: InkWell(
+        onTap: () => onTap(),
+        child: Center(
+          child: Icon(
+            icon,
+            color: color,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -219,16 +236,15 @@ class InputMessageTile extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Material(
-            child: InkWell(
-              onTap: () => getImage(),
-              child: Center(
-                child: Icon(
-                  Icons.image,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: _buildCustomButton(
+                icon: Icons.image, color: Colors.grey, onTap: getImage),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 4.0, right: 8.0),
+            child: _buildCustomButton(
+                icon: Icons.face, color: Colors.grey, onTap: _getGiphy),
           ),
           Expanded(
             flex: 1,
@@ -241,17 +257,9 @@ class InputMessageTile extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: Material(
-              child: InkWell(
-                splashColor: Colors.grey[200],
-                onTap: () => _send(),
-                child: Icon(
-                  Icons.send,
-                  color: kDodgerBlue,
-                ),
-              ),
-            ),
+            padding: const EdgeInsets.only(left: 8.0),
+            child: _buildCustomButton(
+                icon: Icons.send, color: kDodgerBlue, onTap: _send),
           ),
         ],
       ),

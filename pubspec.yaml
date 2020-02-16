@@ -25,6 +25,8 @@ dependencies:
   shared_preferences: ^0.5.6+1
   image_picker: ^0.6.3+1
   cached_network_image: ^2.0.0
+  flutter_icons: ^1.0.0+1
+  giphy_picker: ^1.0.4
 
 
 dev_dependencies:

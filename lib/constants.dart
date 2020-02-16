@@ -39,7 +39,9 @@ const kTextFieldDecoration = InputDecoration(
 
 );
 
+const kAppBarTextStyle = TextStyle(color: kBrown);
 
+const Color kBrown = Color(0xFF5D4037);
 const Color kDodgerBlue = Color(0xFF36a5dd);
 const Color kBurlywook = Color(0xFFe6a88b);
 const Color kNavajowhite = Color(0xFFfad1af);
