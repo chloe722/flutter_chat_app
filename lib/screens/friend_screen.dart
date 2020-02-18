@@ -28,7 +28,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
           ),
         ],
       ),
-      backgroundColor: kNavajowhite,
+      backgroundColor: kDodgerBlue,
       body: Center(
         child: Column(
           children: <Widget>[

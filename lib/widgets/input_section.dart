@@ -22,3 +22,24 @@ class InputSection extends StatelessWidget {
     );
   }
 }
+
+
+
+class SettingInputSection extends StatelessWidget {
+  SettingInputSection({this.content, this.onChange, this.iconData});
+
+  final String content;
+  final Function onChange;
+  final IconData iconData;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+        onChanged: onChange,
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.grey[900]),
+        decoration: kTextFieldSettingDecoration.copyWith(labelText: content, icon: Icon(iconData))
+    );
+  }
+}

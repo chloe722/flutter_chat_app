@@ -28,6 +28,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return DefaultTabController(
         length: 3,
         child: Scaffold(
+//          drawer: Drawer(
+//            child: ListView(
+//              children: <Widget>[
+//                DrawerHeader(
+//                  child: Text('Drawer Header'),
+//                  decoration: BoxDecoration(
+//                    color: Colors.blue,
+//                  ),
+//                ),
+//                ListTile(),
+//                ListTile(),
+//                ListTile(),
+//
+//              ],
+//            ),
+//          ),
           appBar: AppBar(
             flexibleSpace: SafeArea(
               child: TabBar(
