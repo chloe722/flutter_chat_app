@@ -72,17 +72,24 @@ class ProfileScreen extends StatelessWidget {
                                     height: 230,
                                     width: double.infinity,
                                     decoration: BoxDecoration(
-                                      color: Colors.grey,
+                                      color: Colors.grey[200],
 //                                        borderRadius: BorderRadius.circular(100.0),
                                     ),
                                     child: CachedNetworkImage(
                                       imageUrl: data["photoUrl"] ??
                                           "https://imglarger.com/Images/hd-image-sample.jpg",
-                                      placeholder: (context, url) => Icon(
-                                        Icons.person,
-                                        size: 50,
+                                      placeholder: (context, url) => Container(
+                                          height: 100.0,
+                                          width: 100.0,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius: BorderRadius.circular(10.0),
+                                          ),
+                                          child: Center(child: CircularProgressIndicator())),
+                                      errorWidget: (context, url, error) => Material(
+                                        child: Text('Image is not available'),
+                                        borderRadius: BorderRadius.circular(10.0),
                                       ),
-//                                      color: Colors.grey[300],
                                       fit: BoxFit.cover,
                                       height: 100,
                                       width: 100,
