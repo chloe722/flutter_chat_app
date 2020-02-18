@@ -11,15 +11,17 @@ Future<void> updateProfileData(
     {FirebaseUser user,
     String name,
     String userName,
+    String photoUrl,
     String phone,
     String about,
     String status}) async {
   await firestore.collection('users').document(user.uid).updateData({
     if (name != null) 'name': name,
     if (userName != null) 'userName': userName,
+    if (photoUrl != null) 'photoUrl': photoUrl,
     if (phone != null) 'phone': phone,
     if (about != null) 'about': about,
-    if (status != null) 'status' : status,
+    if (status != null) 'status': status,
   });
 }
 

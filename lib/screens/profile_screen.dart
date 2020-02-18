@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
+import 'package:flash_chat/image_manager.dart';
 import 'package:flash_chat/screens/settting/about_edit_screen.dart';
 import 'package:flash_chat/screens/settting/phone_edit_screen.dart';
-import 'package:flash_chat/screens/settting/setting_screen.dart';
 import 'package:flash_chat/screens/settting/status_edit_screen.dart';
 import 'package:flash_chat/screens/settting/username_edit_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +20,22 @@ class ProfileScreen extends StatelessWidget {
   final FirebaseUser user;
   final VoidCallback logOutCallback;
 
-  void setting(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => SettingScreen(
-                  user: user,
-                )));
+//  //TODO delete
+//  void setting(BuildContext context) {
+//    Navigator.push(
+//        context,
+//        MaterialPageRoute(
+//            builder: (context) => SettingScreen(
+//                  user: user,
+//                )));
+//  }
+//
+
+  void _updateProfileImage() async {
+    var _url = await getImage(ImageType.PROFILE);
+    updateProfileData(user: user,photoUrl: _url);
   }
+
 
   void logout() {
     logOutCallback();
@@ -57,25 +65,28 @@ class ProfileScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
                               Stack(children: <Widget>[
-                                Container(
+                                GestureDetector(
+                                  onTap: () => _updateProfileImage(),
+                                  child: Container(
 //                                    margin: EdgeInsets.symmetric(vertical: 16.0),
-                                  height: 230,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
+                                    height: 230,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
 //                                        borderRadius: BorderRadius.circular(100.0),
-                                  ),
-                                  child: CachedNetworkImage(
-                                    imageUrl: data["photoUrl"] ??
-                                        "https://imglarger.com/Images/hd-image-sample.jpg",
-                                    placeholder: (context, url) => Icon(
-                                      Icons.person,
-                                      size: 50,
                                     ),
+                                    child: CachedNetworkImage(
+                                      imageUrl: data["photoUrl"] ??
+                                          "https://imglarger.com/Images/hd-image-sample.jpg",
+                                      placeholder: (context, url) => Icon(
+                                        Icons.person,
+                                        size: 50,
+                                      ),
 //                                      color: Colors.grey[300],
-                                    fit: BoxFit.cover,
-                                    height: 100,
-                                    width: 100,
+                                      fit: BoxFit.cover,
+                                      height: 100,
+                                      width: 100,
+                                    ),
                                   ),
                                 ),
                                 Positioned(
