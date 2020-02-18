@@ -3,10 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
+import 'package:flash_chat/screens/settting/about_edit_screen.dart';
 import 'package:flash_chat/screens/settting/phone_edit_screen.dart';
-import 'package:flash_chat/screens/settting/username_edit_screen.dart';
 import 'package:flash_chat/screens/settting/setting_screen.dart';
+import 'package:flash_chat/screens/settting/status_edit_screen.dart';
+import 'package:flash_chat/screens/settting/username_edit_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'settting/name_edit_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   static String id = 'profile_screen';
@@ -78,16 +82,20 @@ class ProfileScreen extends StatelessWidget {
                                   bottom: 20,
                                   left: 150,
                                   child: GestureDetector(
-                                    onTap: () => showModalBottomSheet(
-                                      isDismissible: true,
-                                        isScrollControlled: true,
-                                        context: context,
-                                        builder: (context) =>
-                                            AnimatedPadding(
-                                              padding: MediaQuery.of(context).viewInsets,  //边距（必要）
-                                              duration: const Duration(milliseconds: 100), //时常 （必要// Added to fix the problem of textinput got covered by keyboard
-                                              child: BottomSheetWidget(user: user,name: data["name"]??"",),
-                                            )),
+                                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => NameEditScreen(
+                                      user: user,
+                                      name: data["name"]??"",
+                                    ))),
+//                                        showModalBottomSheet(
+//                                      isDismissible: true,
+//                                        isScrollControlled: true,
+//                                        context: context,
+//                                            AnimatedPadding(
+//                                              padding: MediaQuery.of(context).viewInsets,
+//                                              duration: const Duration(milliseconds: 100),Added to fix the problem of textinput got covered by keyboard
+//                                              child: BottomSheetWidget(user: user,name: data["name"]??"",),
+//                                            )),
                                     child: Text(
                                       data["name"]?? "",
                                       style: TextStyle(
@@ -104,6 +112,7 @@ class ProfileScreen extends StatelessWidget {
                                 userName: data["userName"],
                                 phone: data["phone"],
                                 about: data["about"],
+                                status: data["status"],
                               ),
                             ],
                           ),
@@ -117,13 +126,14 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class InfoCard extends StatelessWidget {
-  InfoCard({this.user, this.userName, this.email, this.phone, this.about});
+  InfoCard({this.user, this.userName, this.email, this.phone, this.about, this.status});
 
   final FirebaseUser user;
   final String userName;
   final String email;
   final String phone;
   final String about;
+  final String status;
 
   @override
   Widget build(BuildContext context) {
@@ -136,18 +146,20 @@ class InfoCard extends StatelessWidget {
           children: <Widget>[
             ListTile(
               leading: Icon(Icons.face),
-              title: Text('Tell people how you doing :)'),
+              title: Text(status??'Tell people how you doing :)'),
+
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   fullscreenDialog: false,
-                  builder: (context) => SettingScreen(
-                        user: user,
+                  builder: (context) => StatusEditScreen(
+                    user: user,
+                    status: status,
                       ))),
             ),
             ListTile(
               leading: Icon(Icons.alternate_email),
               title: Text(userName ?? 'Add Username'),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => EditUsernameScreen(
+                  builder: (context) => UsernameEditScreen(
                         user: user,
                         username: userName,
                       ))),
@@ -160,7 +172,7 @@ class InfoCard extends StatelessWidget {
               leading: Icon(Icons.phone),
               title: Text(phone ?? 'Add Phone'),
               onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => EditPhoneScreen(
+                  MaterialPageRoute(builder: (context) => PhoneEditScreen(
                     user: user,
                     phone: phone,
                   ))),
@@ -169,7 +181,10 @@ class InfoCard extends StatelessWidget {
               leading: Icon(Icons.info),
               title: Text(about ?? 'Write something :)'),
               onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => SettingScreen())),
+                  MaterialPageRoute(builder: (context) =>  AboutEditScreen(
+                    user: user,
+                    about: about,
+                  ))),
             ),
           ],
         ),

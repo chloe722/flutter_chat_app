@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'screens/model/status.dart';
+
 Firestore firestore = Firestore.instance;
 
 Future<void> updateProfileData(
@@ -10,12 +12,14 @@ Future<void> updateProfileData(
     String name,
     String userName,
     String phone,
-    String about}) async {
+    String about,
+    String status}) async {
   await firestore.collection('users').document(user.uid).updateData({
     if (name != null) 'name': name,
     if (userName != null) 'userName': userName,
     if (phone != null) 'phone': phone,
     if (about != null) 'about': about,
+    if (status != null) 'status' : status,
   });
 }
 

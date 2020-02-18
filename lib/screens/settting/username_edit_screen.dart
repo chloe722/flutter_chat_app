@@ -4,8 +4,8 @@ import 'package:flash_chat/database.dart';
 import 'package:flash_chat/widgets/info_editing_card.dart';
 import 'package:flutter/material.dart';
 
-class EditUsernameScreen extends StatelessWidget {
-  EditUsernameScreen({this.user, this.username});
+class UsernameEditScreen extends StatelessWidget {
+  UsernameEditScreen({this.user, this.username});
 
   final FirebaseUser user;
   final String username;

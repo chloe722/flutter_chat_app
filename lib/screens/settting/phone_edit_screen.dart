@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../../constants.dart';
 
-class EditPhoneScreen extends StatelessWidget {
-  EditPhoneScreen({this.user, this.phone});
+class PhoneEditScreen extends StatelessWidget {
+  PhoneEditScreen({this.user, this.phone});
 
   final FirebaseUser user;
   final String phone;
