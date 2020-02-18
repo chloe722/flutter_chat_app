@@ -21,6 +21,21 @@ const kMessageContainerDecoration = BoxDecoration(
 //  ),
 );
 
+
+//TODO change to const
+final kEditingTextFormFieldDecoration = InputDecoration(
+    filled: true,
+    border: OutlineInputBorder(
+        borderSide: BorderSide(
+            width: 0.0, style: BorderStyle.none),
+        borderRadius: BorderRadius.circular(8.0)),
+
+    focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+            width: 0.0, style: BorderStyle.none),
+        borderRadius: BorderRadius.circular(8.0)),
+    fillColor: Colors.grey[200]);
+
 const kTextFieldDecoration = InputDecoration(
   hintStyle: TextStyle(color: Colors.grey),
   hintText: '',

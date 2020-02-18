@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
-import 'package:flash_chat/screens/settting/edit_username_sreen.dart';
+import 'package:flash_chat/screens/settting/phone_edit_screen.dart';
+import 'package:flash_chat/screens/settting/username_edit_screen.dart';
 import 'package:flash_chat/screens/settting/setting_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -126,8 +127,6 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    print("username???? $userName");
     return Card(
       color: Colors.white,
       elevation: 5.0,
@@ -150,20 +149,21 @@ class InfoCard extends StatelessWidget {
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => EditUsernameScreen(
                         user: user,
-                        userName: userName,
+                        username: userName,
                       ))),
             ),
             ListTile(
               leading: Icon(Icons.email),
               title: Text(email),
-              onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => SettingScreen())),
             ),
             ListTile(
               leading: Icon(Icons.phone),
               title: Text(phone ?? 'Add Phone'),
               onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => SettingScreen())),
+                  MaterialPageRoute(builder: (context) => EditPhoneScreen(
+                    user: user,
+                    phone: phone,
+                  ))),
             ),
             ListTile(
               leading: Icon(Icons.info),
