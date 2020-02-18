@@ -10,10 +10,12 @@ import 'package:flutter/material.dart';
 Firestore firestore = Firestore.instance;
 
 class ChatScreen extends StatefulWidget {
-  ChatScreen(this.user);
+  ChatScreen({this.user, this.chatId, this.friendId});
 
-  static String id = 'chat_screen';
+  static String id = "chat_screen";
   final FirebaseUser user;
+  final String chatId;
+  final String friendId;
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -25,7 +27,12 @@ class _ChatScreenState extends State<ChatScreen> {
   void _getImageUrl() async {
     String _url = await getImage(ImageType.CHAT);
     setState(() {
-      sendContent(type: 1, sender: widget.user.email, content: _url);
+      sendContent(
+          user: widget.user,
+          chatId: widget.chatId,
+          friendId: widget.friendId,
+          type: 1,
+          content: _url);
     });
   }
 
@@ -37,7 +44,7 @@ class _ChatScreenState extends State<ChatScreen> {
         appBar: AppBar(
           leading: null,
           title: Text(
-            '️Chat',
+            "Chat",
             style: kAppBarTextStyle,
           ),
           iconTheme: IconThemeData(color: kBrown),
@@ -48,11 +55,14 @@ class _ChatScreenState extends State<ChatScreen> {
           children: <Widget>[
             MessageStream(
               user: widget.user,
+              chatId: widget.chatId,
             ),
             Align(
                 alignment: FractionalOffset.bottomCenter,
                 child: InputMessageTile(
                   user: widget.user,
+                  chatId: widget.chatId,
+                  friendId: widget.friendId,
                   firestore: firestore,
                   getImage: _getImageUrl,
                 )),
@@ -64,17 +74,18 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class MessageStream extends StatelessWidget {
-  MessageStream({this.user});
+  MessageStream({this.user, this.chatId});
 
   final FirebaseUser user;
+  final String chatId;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
         stream: firestore
-            .collection("chat")
+            .collection("conversation/$chatId/messages")
             .reference()
-            .orderBy('timestamp', descending: true)
+            .orderBy("timestamp", descending: true)
             .snapshots(),
         builder: (context, snapshot) {
           var data = snapshot.data;
@@ -90,11 +101,11 @@ class MessageStream extends StatelessWidget {
                           itemCount: data.documents.length,
                           itemBuilder: (c, i) {
                             return ChatBubble(
-                              isMe: user.email ==
-                                  data.documents[i].data["sender"],
+                              isMe:
+                                  user.uid == data.documents[i].data["sender"],
                               type: data.documents[i].data["type"],
                               content: data.documents[i].data["content"],
-                              sender: data.documents[i].data["sender"],
+                              sender: data.documents[i].data["sender"], //TODO load friend's name/email
                             );
                           }),
                     )
@@ -141,7 +152,7 @@ class ChatBubble extends StatelessWidget {
             ),
             child: Center(child: CircularProgressIndicator())),
         errorWidget: (context, url, error) => Material(
-              child: Text('Image is not available'),
+              child: Text("Image is not available"),
               borderRadius: BorderRadius.circular(10.0),
             ),
         width: 200.0,
@@ -174,7 +185,8 @@ class ChatBubble extends StatelessWidget {
 }
 
 class InputMessageTile extends StatelessWidget {
-  InputMessageTile({this.firestore, this.user, this.getImage});
+  InputMessageTile(
+      {this.firestore, this.user, this.getImage, this.friendId, this.chatId});
 
   final messageTextEditingController = TextEditingController();
 
@@ -182,16 +194,18 @@ class InputMessageTile extends StatelessWidget {
   final FirebaseUser user;
   String text;
   Function getImage;
+  String chatId;
+  String friendId;
 
   //0 = message, 1=image, 2=sticker
 
   void _send() {
     messageTextEditingController.clear();
-    sendContent(type: 0, sender: user.email, content: text);
+    sendContent(
+        user: user, type: 0, chatId: chatId, friendId: friendId, content: text);
   }
 
   void _getGiphy() {
-    print('get stickers');
   }
 
   Widget _buildCustomButton({IconData icon, Color color, Function onTap}) {

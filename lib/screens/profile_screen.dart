@@ -20,17 +20,6 @@ class ProfileScreen extends StatelessWidget {
   final FirebaseUser user;
   final VoidCallback logOutCallback;
 
-//  //TODO delete
-//  void setting(BuildContext context) {
-//    Navigator.push(
-//        context,
-//        MaterialPageRoute(
-//            builder: (context) => SettingScreen(
-//                  user: user,
-//                )));
-//  }
-//
-
   void _updateProfileImage() async {
     var _url = await getImage(ImageType.PROFILE);
     updateProfileData(user: user,photoUrl: _url);
@@ -131,6 +120,7 @@ class ProfileScreen extends StatelessWidget {
                                 phone: data["phone"],
                                 about: data["about"],
                                 status: data["status"],
+                                logOutCallback: logOutCallback,
                               ),
                             ],
                           ),
@@ -144,7 +134,7 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class InfoCard extends StatelessWidget {
-  InfoCard({this.user, this.userName, this.email, this.phone, this.about, this.status});
+  InfoCard({this.user, this.userName, this.email, this.phone, this.about, this.status, this.logOutCallback});
 
   final FirebaseUser user;
   final String userName;
@@ -152,6 +142,8 @@ class InfoCard extends StatelessWidget {
   final String phone;
   final String about;
   final String status;
+  final VoidCallback logOutCallback;
+
 
   @override
   Widget build(BuildContext context) {
@@ -203,6 +195,11 @@ class InfoCard extends StatelessWidget {
                     user: user,
                     about: about,
                   ))),
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Log out'),
+              onTap: () => logOutCallback(),
             ),
           ],
         ),

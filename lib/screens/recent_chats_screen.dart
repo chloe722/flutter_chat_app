@@ -16,7 +16,7 @@ class RecentChatsScreen extends StatelessWidget {
       body: Center(
         child: Container(
           child: StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance.collection('users').snapshots(),
+            stream: Firestore.instance.collection('users2/${user.uid}/conversation').snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(
@@ -26,7 +26,7 @@ class RecentChatsScreen extends StatelessWidget {
               } else {
                 return ListView.builder(
                   itemCount: snapshot.data.documents.length,
-                  itemBuilder: (context, index) => ChatTile(snapshot: snapshot.data.documents[index],user: user,),
+                  itemBuilder: (context, index) => ChatTile(snapshot: snapshot.data.documents[index],user: user),
                 );
               }
             }
@@ -46,12 +46,16 @@ class ChatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Card(
       elevation: 8.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(user))),
+
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(user: user,
+          chatId: snapshot.documentID, friendId: snapshot.data['from'],))),
         isThreeLine: true,
         trailing: Icon(Icons.person),
         leading: Container(

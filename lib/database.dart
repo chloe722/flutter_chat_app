@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/Utils.dart';
+import 'dart:math';
 
 import 'screens/model/status.dart';
 
@@ -44,6 +46,34 @@ void updateUserFromFirebaseUser(FirebaseUser user) async {
   }
 }
 
+void sendContent(
+    {FirebaseUser user,
+    String chatId,
+    int type,
+    String friendId,
+    String sender,
+    String content}) {
+
+  firestore
+      .document('users2/${user.uid}/conversation/$chatId')
+      .setData({
+    'from': friendId,
+    'lastMessage': content});
+
+  firestore
+      .document('users2/$friendId/conversation/$chatId')
+      .setData({
+    'from': user.uid,
+    'lastMessage': content});
+
+  firestore.collection('conversation/$chatId/messages').add({
+    'timestamp': FieldValue.serverTimestamp(),
+    'type': type,
+    'sender': user.uid,
+    'content': content,
+  });
+}
+
 //TODO pass friend object instad of id
 
 void confirmFiend({FirebaseUser user, String friendId}) {
@@ -79,13 +109,4 @@ CollectionReference getFriendRequest(FirebaseUser user) {
 
 CollectionReference getFriendList(FirebaseUser user) {
   return firestore.collection('users2/${user.uid}/friends');
-}
-
-void sendContent({int type, String sender, String content}) {
-  firestore.collection('chat').add({
-    'timestamp': FieldValue.serverTimestamp(),
-    'type': type,
-    'sender': sender,
-    'content': content,
-  });
 }
