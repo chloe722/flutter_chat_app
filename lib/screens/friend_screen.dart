@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
-import 'package:flash_chat/screens/add_friend_screen.dart';
 import 'package:flutter/material.dart';
 
 class FriendsScreen extends StatefulWidget {
@@ -15,20 +14,11 @@ class FriendsScreen extends StatefulWidget {
 }
 
 class _FriendsScreenState extends State<FriendsScreen> {
-  String frinedid =
-      '0FPux2aAqEYx4hCDzPxZDzCy3wE3'; //TODO Updated with contact id or object
+//  String frinedid = '0FPux2aAqEYx4hCDzPxZDzCy3wE3'; //TODO Updated with contact id or object
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AddFriendScreen(user: widget.user))),
-          ),
-        ],
-      ),
       backgroundColor: kDodgerBlue,
       body: Center(
         child: Column(
@@ -39,21 +29,22 @@ class _FriendsScreenState extends State<FriendsScreen> {
               child: StreamBuilder<QuerySnapshot>(
                   stream: getFriendRequest(widget.user).snapshots(),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
+                    var data = snapshot.data?.documents;
+
+                    if (data.isEmpty) {
                       return Center(
                         child: Container(
                           child: Text('No friend request'),
                         ),
                       );
                     } else {
-                      print('request list: ${snapshot.data.documents}');
-
+                      print('request list: ${snapshot.data?.documents}');
                       return ListView.builder(
                         shrinkWrap: true,
-                        itemCount: snapshot.data.documents.length,
+                        itemCount: data.length,
                         itemBuilder: (context, index) => FriendRequestTile(
                           isFriend: Colors.grey,
-                          friendId: snapshot.data.documents[index].documentID,
+                          friendId: data[index].documentID,
                           user: widget.user,
                         ),
                       );
@@ -66,17 +57,21 @@ class _FriendsScreenState extends State<FriendsScreen> {
               child: StreamBuilder<QuerySnapshot>(
                   stream: getFriendList(widget.user).snapshots(),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
+                    var data = snapshot.data?.documents;
+
+                    if (data.isEmpty) {
                       return Center(
                         child: Container(child: Text('No friend yet')),
                       );
                     } else {
-                      print(" frined list: ${snapshot.data.documents}");
+                      print(" frined list: $data");
                       return ListView.builder(
                         shrinkWrap: true,
-                        itemCount: snapshot.data.documents.length,
-                        itemBuilder: (context, index) =>
-                            FriendTile(isFriend: Colors.greenAccent[100]),
+                        itemCount: data.length,
+                        itemBuilder: (context, i) => FriendTile(
+                            user: widget.user,
+                            snapshot: data[i],
+                            isFriend: Colors.greenAccent[100]),
                       );
                     }
                   }),
@@ -159,7 +154,7 @@ class FriendTile extends StatelessWidget {
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
           isThreeLine: true,
-          trailing: Icon(Icons.person_add),
+//          trailing: Icon(Icons.people),
           leading: Container(
             width: 60.0,
             height: 60.0,

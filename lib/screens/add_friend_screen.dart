@@ -1,12 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/database.dart';
 import 'package:flutter/material.dart';
 
 class AddFriendScreen extends StatelessWidget {
-  FirebaseUser user;
-
   AddFriendScreen({this.user});
+
+  final FirebaseUser user;
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,19 +48,20 @@ class AddFriendTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
-          isThreeLine: true,
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
           trailing: IconButton(icon: Icon(Icons.person_add), onPressed: () => addFriend(user: user, friendId: snapshot.data["id"])),
           leading: Container(
-            width: 60.0,
-            height: 60.0,
+            width: 80.0,
+            height: 100.0,
             decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                      snapshot.data["photoUrl"]),
-                  fit: BoxFit.contain,
-                ),
+              image: DecorationImage(
+                alignment: Alignment.center,
+                  fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(snapshot.data["photoUrl"]??"")
+              ),
                 shape: BoxShape.circle),
-          ),
+            ),
+
           title: Text(
             snapshot.data["name"],
             style: TextStyle(

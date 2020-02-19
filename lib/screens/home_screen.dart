@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/screens/add_friend_screen.dart';
 import 'package:flash_chat/screens/friend_screen.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flash_chat/screens/recent_chats_screen.dart';
@@ -21,18 +22,30 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     _widgets = [
-      RecentChatsScreen(user: widget.user,),
+      RecentChatsScreen(
+        user: widget.user,
+      ),
       FriendsScreen(user: widget.user),
       ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
     ];
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
+          actions: <Widget>[
+            if (_currentIndex == 1)
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            AddFriendScreen(user: widget.user))),
+              )
+          ],
 //        flexibleSpace: SafeArea(
 //          child: TabBar(
 //            indicator: CustomTabIndicator(),
@@ -54,21 +67,23 @@ class _HomeScreenState extends State<HomeScreen> {
 //          ),
 //        ),
         ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (int index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text("Chats")),
-          BottomNavigationBarItem(icon: Icon(Icons.people), title: Text("Friends")),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings"))
-        ],
-      ),
-      body: _widgets[_currentIndex]
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (int index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+                icon: Icon(Icons.chat), title: Text("Chats")),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.people), title: Text("Friends")),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings), title: Text("Settings"))
+          ],
+        ),
+        body: _widgets[_currentIndex]
 //          TabBarView(
 //            children: <Widget>[
 //              RecentChatsScreen(user: widget.user,),
@@ -76,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //              ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
 //            ],
 //          )
-    );
+        );
   }
 }
 

@@ -10,11 +10,12 @@ import 'package:flutter/material.dart';
 Firestore firestore = Firestore.instance;
 
 class ChatScreen extends StatefulWidget {
-  ChatScreen({this.user, this.chatId, this.friendId});
+  ChatScreen({this.user, this.chatId, this.friendId, this.friendName});
 
   static String id = "chat_screen";
   final FirebaseUser user;
   final String chatId;
+  final String friendName;
   final String friendId;
 
   @override
@@ -81,14 +82,11 @@ class MessageStream extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: firestore
-            .collection("conversation/$chatId/messages")
-            .reference()
-            .orderBy("timestamp", descending: true)
-            .snapshots(),
+    return StreamBuilder<List<Message>>(
+        stream: getMessagesByChatId(chatId),
         builder: (context, snapshot) {
           var data = snapshot.data;
+          if(snapshot.hasError) print(snapshot.error);
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return CircularProgressIndicator();
@@ -96,18 +94,15 @@ class MessageStream extends StatelessWidget {
               return snapshot.hasData && data != null
                   ? Expanded(
                       child: ListView.builder(
-                          reverse: true,
-                          shrinkWrap: true,
-                          itemCount: data.documents.length,
-                          itemBuilder: (c, i) {
-                            return ChatBubble(
-                              isMe:
-                                  user.uid == data.documents[i].data["sender"],
-                              type: data.documents[i].data["type"],
-                              content: data.documents[i].data["content"],
-                              sender: data.documents[i].data["sender"], //TODO load friend's name/email
-                            );
-                          }),
+                              reverse: true,
+                              shrinkWrap: true,
+                              itemCount: data.length,
+                              itemBuilder: (c, i) {
+                                return ChatBubble(
+                                  isMe: user.uid == data[i].author.id,
+                                    message: data[i],
+                                );
+                              }),
                     )
                   : Text("Loading");
           }
@@ -116,14 +111,11 @@ class MessageStream extends StatelessWidget {
 }
 
 class ChatBubble extends StatelessWidget {
-  ChatBubble({this.content, this.sender, this.type, this.isMe});
+  ChatBubble({this.isMe, this.message});
 
   //0 = message, 1=sticker, 2=image
-
-  final String content;
-  final String sender;
-  final int type;
   final bool isMe;
+  final Message message;
 
   Widget _buildText() {
     return Material(
@@ -136,7 +128,7 @@ class ChatBubble extends StatelessWidget {
       color: isMe ? Colors.amber[300] : Colors.grey[100],
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(content ?? "", softWrap: true),
+        child: Text(message.content ?? "", softWrap: true),
       ),
     );
   }
@@ -158,7 +150,7 @@ class ChatBubble extends StatelessWidget {
         width: 200.0,
         height: 200.0,
         fit: BoxFit.cover,
-        imageUrl: content ?? "");
+        imageUrl: message.content ?? "");
   }
 
   Widget _builtSticker() {
@@ -173,11 +165,11 @@ class ChatBubble extends StatelessWidget {
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
-          Text(sender ?? ""),
+          Text(message.author.name ?? ""),
           SizedBox(height: 5.0),
-          if (type == 0) _buildText(),
-          if (type == 1) _builtImage(),
-          if (type == 2) _builtSticker(),
+          if (message.type == 0) _buildText(),
+          if (message.type == 1) _builtImage(),
+          if (message.type == 2) _builtSticker(),
         ],
       ),
     );

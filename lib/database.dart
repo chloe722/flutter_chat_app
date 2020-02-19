@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flash_chat/Utils.dart';
-import 'dart:math';
-
+import 'package:flash_chat/model/user.dart';
 
 Firestore firestore = Firestore.instance;
 
@@ -52,18 +50,13 @@ void sendContent(
     String friendId,
     String sender,
     String content}) {
-
   firestore
       .document("users2/${user.uid}/conversation/$chatId")
-      .setData({
-    "from": friendId,
-    "lastMessage": content});
+      .setData({"from": friendId, "lastMessage": content});
 
   firestore
       .document("users2/$friendId/conversation/$chatId")
-      .setData({
-    "from": user.uid,
-    "lastMessage": content});
+      .setData({"from": user.uid, "lastMessage": content});
 
   firestore.collection("conversation/$chatId/messages").add({
     "timestamp": FieldValue.serverTimestamp(),
@@ -110,7 +103,54 @@ CollectionReference getFriendList(FirebaseUser user) {
   return firestore.collection("users2/${user.uid}/friends");
 }
 
-
 CollectionReference getNewUsersList() {
   return firestore.collection("new_users");
+}
+
+Future<User> getUserById(String id) {
+  return firestore
+      .document("users2/$id/info/info")
+      .get()
+      .then((i) => User.fromFirebase(i));
+}
+
+Stream<List<Message>> getMessagesByChatId(String chatId) {
+  Map<String, User> users = {};
+
+  return firestore
+      .collection("conversation/$chatId/messages")
+      .reference()
+      .orderBy("timestamp", descending: true)
+      .snapshots()
+      .asyncMap((snapshot) async {
+    ///Prefetch users (return future)
+    for (var document in snapshot.documents) {
+      print(document.data);
+
+      String userId = document.data["sender"];
+      if (!users.containsKey(userId)) {
+        users[userId] = await getUserById(userId);
+      }
+    }
+    print(users);
+    return snapshot.documents.map((document) =>
+        Message.fromFirebase(document, users[document.data["sender"]])).toList();
+  });
+}
+
+class Message {
+  User author;
+  int type;
+  String content;
+  Timestamp timestamp;
+
+  Message({this.author, this.type, this.content, this.timestamp});
+
+  factory Message.fromFirebase(DocumentSnapshot snapshot, User user) {
+    return Message(
+        author: user,
+        content: snapshot["content"],
+        timestamp: snapshot["timestamp"],
+        type: snapshot["type"]);
+  }
 }
