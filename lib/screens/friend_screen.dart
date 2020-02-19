@@ -29,23 +29,29 @@ class _FriendsScreenState extends State<FriendsScreen> {
               child: StreamBuilder<QuerySnapshot>(
                   stream: getFriendRequest(widget.user).snapshots(),
                   builder: (context, snapshot) {
-                    var data = snapshot.data?.documents;
 
-                    if (data.isEmpty) {
+                    if (snapshot.hasData && snapshot.data!= null) {
+                      var data = snapshot.data.documents;
+
+                      if (data.isEmpty) {
+                        return Text('No request');
+                      } else {
+                        print('request list: $data');
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: data.length,
+                          itemBuilder: (context, index) => FriendRequestTile(
+                            isFriend: Colors.grey,
+                            friendId: data[index].documentID,
+                            user: widget.user,
+                          ),
+                        );
+                      }
+
+                    } else {
                       return Center(
                         child: Container(
                           child: Text('No friend request'),
-                        ),
-                      );
-                    } else {
-                      print('request list: ${snapshot.data?.documents}');
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: data.length,
-                        itemBuilder: (context, index) => FriendRequestTile(
-                          isFriend: Colors.grey,
-                          friendId: data[index].documentID,
-                          user: widget.user,
                         ),
                       );
                     }
@@ -57,22 +63,28 @@ class _FriendsScreenState extends State<FriendsScreen> {
               child: StreamBuilder<QuerySnapshot>(
                   stream: getFriendList(widget.user).snapshots(),
                   builder: (context, snapshot) {
-                    var data = snapshot.data?.documents;
 
-                    if (data.isEmpty) {
+                    if (snapshot.hasData != null && snapshot.data != null) {
+                      var data = snapshot.data.documents;
+                      print(" frined list: $data");
+
+                      if (data.isEmpty) {
+                        return Text('No freinds yet');
+                      } else {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: data.length,
+                          itemBuilder: (context, i) => FriendTile(
+                              user: widget.user,
+                              snapshot: data[i],
+                              isFriend: Colors.greenAccent[100]),
+                        );
+                      }
+                    } else {
                       return Center(
                         child: Container(child: Text('No friend yet')),
                       );
-                    } else {
-                      print(" frined list: $data");
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: data.length,
-                        itemBuilder: (context, i) => FriendTile(
-                            user: widget.user,
-                            snapshot: data[i],
-                            isFriend: Colors.greenAccent[100]),
-                      );
+
                     }
                   }),
             ),

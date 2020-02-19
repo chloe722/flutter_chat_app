@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
+import 'package:flash_chat/database.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class RecentChatsScreen extends StatelessWidget {
       body: Center(
         child: Container(
           child: StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance.collection('users2/${user.uid}/conversation').snapshots(),
+            stream: getRecentChatsById(user),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
 import 'package:flash_chat/image_manager.dart';
+import 'package:flash_chat/model/message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -98,6 +99,7 @@ class MessageStream extends StatelessWidget {
                               shrinkWrap: true,
                               itemCount: data.length,
                               itemBuilder: (c, i) {
+                                print('user id: ${user.uid}   list of id: ${data[i].author.id}');
                                 return ChatBubble(
                                   isMe: user.uid == data[i].author.id,
                                     message: data[i],

@@ -25,7 +25,6 @@ class AddFriendScreen extends StatelessWidget {
                   itemCount: data.length,
                     itemBuilder: (context, i) => AddFriendTile(user: user, snapshot: data[i]),shrinkWrap: true,);
               } else {
-
                 return Text("No users join at the moment");
               }
             }

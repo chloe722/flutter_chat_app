@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/model/user.dart';
 
+import 'model/message.dart';
+
 Firestore firestore = Firestore.instance;
 
 Future<void> updateProfileData(
@@ -22,25 +24,48 @@ Future<void> updateProfileData(
     if (about != null) "about": about,
     if (status != null) "status": status,
   });
+  await firestore.collection("public_users").document(user.uid).updateData({
+    if (name != null) "name": name,
+    if (userName != null) "userName": userName,
+    if (photoUrl != null) "photoUrl": photoUrl,
+    if (about != null) "about": about,
+    if (status != null) "status": status,
+  });
 }
 
 void updateUserFromFirebaseUser(FirebaseUser user) async {
   //Update data to server if new user
   if (user != null) {
     final QuerySnapshot result = await firestore
-        .collection("users2")
+        .collection("users")
         .where("id", isEqualTo: user.uid)
         .getDocuments();
+
     final List<DocumentSnapshot> documents = result.documents;
+
     if (documents.length == 0) {
-      firestore.document("users2/${user.uid}/info/info").setData({
+      firestore.document("users/${user.uid}").setData({
         "id": user.uid,
         "name": user.displayName,
         "email": user.email,
         "photoUrl": user.photoUrl,
       });
+
+      firestore.document("public_users/${user.uid}").setData({
+        "id": user.uid,
+        "name": user.displayName,
+        "photoUrl": user.photoUrl,
+      });
     }
   }
+}
+
+Stream<DocumentSnapshot> getUserProfileById(FirebaseUser user) {
+  return firestore.collection('users').document(user.uid).snapshots();
+}
+
+Stream<QuerySnapshot> getRecentChatsById(FirebaseUser user) {
+  return firestore.collection('users/${user.uid}/conversation').snapshots();
 }
 
 void sendContent(
@@ -51,11 +76,11 @@ void sendContent(
     String sender,
     String content}) {
   firestore
-      .document("users2/${user.uid}/conversation/$chatId")
+      .document("users/${user.uid}/conversation/$chatId")
       .setData({"from": friendId, "lastMessage": content});
 
   firestore
-      .document("users2/$friendId/conversation/$chatId")
+      .document("users/$friendId/conversation/$chatId")
       .setData({"from": user.uid, "lastMessage": content});
 
   firestore.collection("conversation/$chatId/messages").add({
@@ -70,11 +95,11 @@ void sendContent(
 
 void confirmFiend({FirebaseUser user, String friendId}) {
   firestore
-      .document("users2/${user.uid}/friends/$friendId")
+      .document("users/${user.uid}/friends/$friendId")
       .setData({"name": "test", "email": "test@test.com"});
 
   firestore
-      .document("users2/$friendId/friends/${user.uid}")
+      .document("users/$friendId/friends/${user.uid}")
       .setData({"name": user.displayName, "email": user.email});
 
   rejectFriendRequest(user: user, friendId: friendId);
@@ -85,8 +110,8 @@ void rejectFriendRequest({FirebaseUser user, String friendId}) {
 }
 
 void deleteFriend({FirebaseUser user, String friendId}) {
-  firestore.document("users2/${user.uid}/friend/$friendId").delete();
-  firestore.document("users2/$friendId/friend/${user.uid}").delete();
+  firestore.document("users/${user.uid}/friend/$friendId").delete();
+  firestore.document("users/$friendId/friend/${user.uid}").delete();
 }
 
 void addFriend({FirebaseUser user, String friendId}) {
@@ -100,18 +125,15 @@ CollectionReference getFriendRequest(FirebaseUser user) {
 }
 
 CollectionReference getFriendList(FirebaseUser user) {
-  return firestore.collection("users2/${user.uid}/friends");
+  return firestore.collection("users/${user.uid}/friends");
 }
 
 CollectionReference getNewUsersList() {
-  return firestore.collection("new_users");
+  return firestore.collection("public_users");
 }
 
 Future<User> getUserById(String id) {
-  return firestore
-      .document("users2/$id/info/info")
-      .get()
-      .then((i) => User.fromFirebase(i));
+  return firestore.document("user/$id").get().then((i) => User.fromFirebase(i));
 }
 
 Stream<List<Message>> getMessagesByChatId(String chatId) {
@@ -133,24 +155,9 @@ Stream<List<Message>> getMessagesByChatId(String chatId) {
       }
     }
     print(users);
-    return snapshot.documents.map((document) =>
-        Message.fromFirebase(document, users[document.data["sender"]])).toList();
+    return snapshot.documents
+        .map((document) =>
+            Message.fromFirebase(document, users[document.data["sender"]]))
+        .toList();
   });
-}
-
-class Message {
-  User author;
-  int type;
-  String content;
-  Timestamp timestamp;
-
-  Message({this.author, this.type, this.content, this.timestamp});
-
-  factory Message.fromFirebase(DocumentSnapshot snapshot, User user) {
-    return Message(
-        author: user,
-        content: snapshot["content"],
-        timestamp: snapshot["timestamp"],
-        type: snapshot["type"]);
-  }
 }

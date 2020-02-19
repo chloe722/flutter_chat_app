@@ -39,10 +39,7 @@ class ProfileScreen extends StatelessWidget {
         child: Container(
           color: kDodgerBlue,
           child: StreamBuilder<DocumentSnapshot>(
-              stream: Firestore.instance
-                  .collection('users')
-                  .document(user.uid)
-                  .snapshots(),
+              stream: getUserProfileById(user),
               builder: (context, snapshot) {
                 Map data = snapshot.data?.data ?? Map();
                 switch (snapshot.connectionState) {
@@ -106,7 +103,7 @@ class ProfileScreen extends StatelessWidget {
 //                                              child: BottomSheetWidget(user: user,name: data["name"]??"",),
 //                                            )),
                                       child: Text(
-                                        data["name"]?? "",
+                                        data["name"]?? "Add Name",
                                         style: TextStyle(
                                             fontSize: 25.0,
                                             color: Colors.white,

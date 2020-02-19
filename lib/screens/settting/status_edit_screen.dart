@@ -8,11 +8,10 @@ import '../../constants.dart';
 class StatusEditScreen extends StatelessWidget {
   StatusEditScreen({this.user, this.status});
 
-  FirebaseUser user;
-  String status;
+  final FirebaseUser user;
+  final String status;
 
   void onStatusSelected(BuildContext context, Status status) {
-    print('status: $status');
     updateProfileData(user: user, status: status.content)
         .then((e) => Navigator.pop(context));
   }

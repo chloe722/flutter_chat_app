@@ -12,6 +12,7 @@ class User {
 
 
   factory User.fromFirebase(DocumentSnapshot snapshot){
+    print('idid: ${snapshot.data["id"]}');
     return User(
       id: snapshot.documentID,
       name: snapshot.data["name"],
