@@ -1,9 +1,7 @@
 
 # Flash Chat
-![Image](images/welcom.jpg)
 ![Image](images/login.jpg)
 ![Image](images/friend_requests.jpg)
-
 
 ## Status
 Developing
