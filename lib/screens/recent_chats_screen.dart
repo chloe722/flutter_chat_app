@@ -55,7 +55,7 @@ class ChatTile extends StatelessWidget {
       child: ListTile(
 
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(user: user,
-          chatId: snapshot.documentID, friendId: snapshot.data['from'],))),
+          chatId: snapshot.documentID, friendId: snapshot.data["from"]))),
         isThreeLine: true,
         trailing: Icon(Icons.person),
         leading: Container(

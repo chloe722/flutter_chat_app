@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/database.dart';
-import 'package:flash_chat/screens/model/status.dart';
+import 'package:flash_chat/model/status.dart';
 import 'package:flutter/material.dart';
 
 import '../../constants.dart';

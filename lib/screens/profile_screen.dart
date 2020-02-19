@@ -34,66 +34,68 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        color: kDodgerBlue,
-        child: StreamBuilder<DocumentSnapshot>(
-            stream: Firestore.instance
-                .collection('users')
-                .document(user.uid)
-                .snapshots(),
-            builder: (context, snapshot) {
-              Map data = snapshot.data?.data ?? Map();
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return Text("Loading..");
-                default:
-                  return snapshot.hasData && snapshot.data != null
-                      ? Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Stack(children: <Widget>[
-                                GestureDetector(
-                                  onTap: () => _updateProfileImage(),
-                                  child: Container(
+      body: SingleChildScrollView(
+        primary: true,
+        child: Container(
+          color: kDodgerBlue,
+          child: StreamBuilder<DocumentSnapshot>(
+              stream: Firestore.instance
+                  .collection('users')
+                  .document(user.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                Map data = snapshot.data?.data ?? Map();
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return Text("Loading..");
+                  default:
+                    return snapshot.hasData && snapshot.data != null
+                        ? Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                Stack(children: <Widget>[
+                                  GestureDetector(
+                                    onTap: () => _updateProfileImage(),
+                                    child: Container(
 //                                    margin: EdgeInsets.symmetric(vertical: 16.0),
-                                    height: 230,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[200],
+                                      height: 230,
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[200],
 //                                        borderRadius: BorderRadius.circular(100.0),
-                                    ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: data["photoUrl"] ??
-                                          "https://imglarger.com/Images/hd-image-sample.jpg",
-                                      placeholder: (context, url) => Container(
-                                          height: 100.0,
-                                          width: 100.0,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey[300],
-                                            borderRadius: BorderRadius.circular(10.0),
-                                          ),
-                                          child: Center(child: CircularProgressIndicator())),
-                                      errorWidget: (context, url, error) => Material(
-                                        child: Text('Image is not available'),
-                                        borderRadius: BorderRadius.circular(10.0),
                                       ),
-                                      fit: BoxFit.cover,
-                                      height: 100,
-                                      width: 100,
+                                      child: CachedNetworkImage(
+                                        imageUrl: data["photoUrl"] ??
+                                            "https://imglarger.com/Images/hd-image-sample.jpg",
+                                        placeholder: (context, url) => Container(
+                                            height: 100.0,
+                                            width: 100.0,
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey[300],
+                                              borderRadius: BorderRadius.circular(10.0),
+                                            ),
+                                            child: Center(child: CircularProgressIndicator())),
+                                        errorWidget: (context, url, error) => Material(
+                                          child: Text('Image is not available'),
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        ),
+                                        fit: BoxFit.cover,
+                                        height: 100,
+                                        width: 100,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Positioned(
-                                  bottom: 20,
-                                  left: 150,
-                                  child: GestureDetector(
-                                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => NameEditScreen(
-                                      user: user,
-                                      name: data["name"]??"",
-                                    ))),
+                                  Positioned(
+                                    bottom: 20,
+                                    left: 150,
+                                    child: GestureDetector(
+                                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => NameEditScreen(
+                                        user: user,
+                                        name: data["name"]??"",
+                                      ))),
 //                                        showModalBottomSheet(
 //                                      isDismissible: true,
 //                                        isScrollControlled: true,
@@ -103,31 +105,32 @@ class ProfileScreen extends StatelessWidget {
 //                                              duration: const Duration(milliseconds: 100),Added to fix the problem of textinput got covered by keyboard
 //                                              child: BottomSheetWidget(user: user,name: data["name"]??"",),
 //                                            )),
-                                    child: Text(
-                                      data["name"]?? "",
-                                      style: TextStyle(
-                                          fontSize: 25.0,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
+                                      child: Text(
+                                        data["name"]?? "",
+                                        style: TextStyle(
+                                            fontSize: 25.0,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   ),
+                                ]),
+                                InfoCard(
+                                  user: user,
+                                  email: data["email"] ?? "",
+                                  userName: data["userName"],
+                                  phone: data["phone"],
+                                  about: data["about"],
+                                  status: data["status"],
+                                  logOutCallback: logOutCallback,
                                 ),
-                              ]),
-                              InfoCard(
-                                user: user,
-                                email: data["email"] ?? "",
-                                userName: data["userName"],
-                                phone: data["phone"],
-                                about: data["about"],
-                                status: data["status"],
-                                logOutCallback: logOutCallback,
-                              ),
-                            ],
-                          ),
-                        )
-                      : CircularProgressIndicator();
-              }
-            }),
+                              ],
+                            ),
+                          )
+                        : CircularProgressIndicator();
+                }
+              }),
+        ),
       ),
     );
   }

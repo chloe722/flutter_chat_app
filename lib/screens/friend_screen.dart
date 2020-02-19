@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
+import 'package:flash_chat/screens/add_friend_screen.dart';
 import 'package:flutter/material.dart';
 
 class FriendsScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
-            onPressed: () => addFriend(user: widget.user, friendId: frinedid),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AddFriendScreen(user: widget.user))),
           ),
         ],
       ),
@@ -154,13 +155,11 @@ class FriendTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         elevation: 8.0,
-        color: isFriend,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
           isThreeLine: true,
-          trailing: Icon(Icons.person),
+          trailing: Icon(Icons.person_add),
           leading: Container(
             width: 60.0,
             height: 60.0,

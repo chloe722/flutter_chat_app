@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/friend_screen.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flash_chat/screens/recent_chats_screen.dart';
-import 'package:flash_chat/widgets/custom_tab_indicator.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,64 +15,68 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Widget> _widgets;
+  int _currentIndex = 0;
 
   @override
   void initState() {
+    _widgets = [
+      RecentChatsScreen(user: widget.user,),
+      FriendsScreen(user: widget.user),
+      ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
+    ];
     super.initState();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 3,
-        child: Scaffold(
-//          drawer: Drawer(
-//            child: ListView(
-//              children: <Widget>[
-//                DrawerHeader(
-//                  child: Text('Drawer Header'),
-//                  decoration: BoxDecoration(
-//                    color: Colors.blue,
-//                  ),
-//                ),
-//                ListTile(),
-//                ListTile(),
-//                ListTile(),
-//
-//              ],
-//            ),
+    return Scaffold(
+      appBar: AppBar(
+//        flexibleSpace: SafeArea(
+//          child: TabBar(
+//            indicator: CustomTabIndicator(),
+//            indicatorSize: TabBarIndicatorSize.label,
+//            tabs: <Widget>[
+//              Padding(
+//                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+//                child: Tab(icon: Icon(Icons.chat, color: kBrown,)),
+//              ),
+//              Padding(
+//                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+//                child: Tab(icon: Icon(Icons.people, color: kBrown)),
+//              ),
+//              Padding(
+//                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
+//                child: Tab(icon: Icon(Icons.person, color: kBrown)),
+//              )
+//            ],
 //          ),
-          appBar: AppBar(
-            flexibleSpace: SafeArea(
-              child: TabBar(
-                indicator: CustomTabIndicator(),
-                indicatorSize: TabBarIndicatorSize.label,
-                tabs: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
-                    child: Tab(icon: Icon(Icons.chat, color: kBrown,)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
-                    child: Tab(icon: Icon(Icons.people, color: kBrown)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 8.0),
-                    child: Tab(icon: Icon(Icons.person, color: kBrown)),
-                  )
-                ],
-              ),
-            ),
-            ),
-          body: TabBarView(
-            children: <Widget>[
-              RecentChatsScreen(user: widget.user,),
-              FriendsScreen(user: widget.user),
-              ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
-            ],
-          )
+//        ),
         ),
-      );
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (int index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text("Chats")),
+          BottomNavigationBarItem(icon: Icon(Icons.people), title: Text("Friends")),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text("Settings"))
+        ],
+      ),
+      body: _widgets[_currentIndex]
+//          TabBarView(
+//            children: <Widget>[
+//              RecentChatsScreen(user: widget.user,),
+//              FriendsScreen(user: widget.user),
+//              ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
+//            ],
+//          )
+    );
   }
 }
 
