@@ -11,12 +11,11 @@ import 'package:flutter/material.dart';
 Firestore firestore = Firestore.instance;
 
 class ChatScreen extends StatefulWidget {
-  ChatScreen({this.user, this.chatId, this.friendId, this.friendName});
+  ChatScreen({this.user, this.chatId, this.friendId});
 
   static String id = "chat_screen";
   final FirebaseUser user;
   final String chatId;
-  final String friendName;
   final String friendId;
 
   @override

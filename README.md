@@ -1,6 +1,8 @@
 
 # Flash Chat
-![Image](images/welcom.jpg)![Image](images/logn.jpg)![Image](images/friend_requests.jpg)
+![Image](images/welcom.jpg)
+![Image](images/login.jpg)
+![Image](images/friend_requests.jpg)
 
 
 ## Status

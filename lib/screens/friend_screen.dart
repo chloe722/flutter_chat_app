@@ -4,6 +4,8 @@ import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
 import 'package:flutter/material.dart';
 
+import 'chat_screen.dart';
+
 class FriendsScreen extends StatefulWidget {
   FriendsScreen({this.user});
 
@@ -165,6 +167,7 @@ class FriendTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(user: user, friendId: ,))),
           isThreeLine: true,
 //          trailing: Icon(Icons.people),
           leading: Container(
