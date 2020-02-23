@@ -66,28 +66,17 @@ void updateUserFromFirebaseUser(FirebaseUser user) async {
 Stream<DocumentSnapshot> getUserProfileById(FirebaseUser user) {
   return firestore.collection('users').document(user.uid).snapshots();
 }
-//TODO delete
-//Stream<QuerySnapshot> getFullChatsById(FirebaseUser user) {
-//
-//  return firestore.collection('users/${user.uid}/conversation').snapshots();
-//}
 
 Stream<List<RecentChat>> getRecentChats({FirebaseUser user}) {
-  List<RecentChat> recentChats = [];
-
   return firestore
       .collection("users/${user.uid}/conversation")
       .snapshots()
-      .asyncMap((snapshot) async {
-    for (var document in snapshot.documents) {
+      .asyncMap((snapshot) {
+    return Future.wait(snapshot.documents.map((document) async {
       String _friendId = document.data["from"];
-      String _chatId = document.documentID;
-      String _lastMessage = document.data["lastMessage"];
       User _friend = await getUserById(_friendId);
-      recentChats.add(RecentChat.fromData(
-          friend: _friend, chatId: _chatId, lastMessage: _lastMessage));
-    }
-    return recentChats;
+      return RecentChat.fromDatabase(document: document, friend: _friend);
+    }));
   });
 }
 
@@ -131,25 +120,27 @@ void sendContent(
   });
 }
 
-//TODO pass friend object instad of id
-
-void confirmFriend({FirebaseUser user, String friendId}) {
+void confirmFriend({FirebaseUser user, User friend}) {
   firestore
-      .document("users/${user.uid}/friends/$friendId")
-      .setData({"name": "test", "email": "test@test.com"}); //TODO
+      .document("users/${user.uid}/friends/${friend.id}")
+      .setData({"name": friend.name, "email": friend.email});
 
   firestore
-      .document("users/$friendId/friends/${user.uid}")
+      .document("users/${friend.id}/friends/${user.uid}")
       .setData({"name": user.displayName, "email": user.email});
 
-  rejectFriendRequest(user: user, friendId: friendId);
+  clearFriendRequest(user: user, friendId: friend.id);
 }
 
-void rejectFriendRequest({FirebaseUser user, String friendId}) {
+void clearFriendRequest({FirebaseUser user, String friendId}) {
   firestore.document("friend_request_to/${user.uid}/from/$friendId").delete();
 }
 
-void deleteFriend({FirebaseUser user, String friendId}) {
+void rejectFriendRequest({FirebaseUser user, String friendId}) {
+  clearFriendRequest(user: user, friendId: friendId);
+}
+
+void unFriend({FirebaseUser user, String friendId}) {
   firestore.document("users/${user.uid}/friend/$friendId").delete();
   firestore.document("users/$friendId/friend/${user.uid}").delete();
 }
@@ -161,30 +152,26 @@ void addFriend({FirebaseUser user, String friendId}) {
 }
 
 Stream<List<User>> getFriendRequest(FirebaseUser user) {
-  List<User> friendRequests = [];
-  return firestore.collection("friend_request_to/${user.uid}/from").snapshots().asyncMap((snapshot) async {
-    for (var document in snapshot.documents) {
-      print("request friend ID: ${document.documentID}");
+  return firestore
+      .collection("friend_request_to/${user.uid}/from")
+      .snapshots()
+      .asyncMap((snapshot) async {
+    return Future.wait(snapshot.documents.map((document) async {
       User _friendRequest = await getUserById(document.documentID);
-      friendRequests.add(_friendRequest);
-    }
-    return friendRequests;
-
+      return _friendRequest;
+    }).toList());
   });
 }
 
 Stream<List<User>> getFriendList(FirebaseUser user) {
-  List<User> friends = [];
-
   return firestore
       .collection("users/${user.uid}/friends")
       .snapshots()
       .asyncMap((snapshot) async {
-    for (var document in snapshot.documents) {
+    return Future.wait(snapshot.documents.map((document) async {
       User _friend = await getUserById(document.documentID);
-      friends.add(_friend);
-    }
-    return friends;
+      return _friend;
+    }).toList());
   });
 }
 
@@ -208,14 +195,21 @@ Stream<List<Message>> getMessagesByChatId(String chatId) {
       .orderBy("timestamp", descending: true)
       .snapshots()
       .asyncMap((snapshot) async {
-    ///Prefetch users (return future)
-    for (var document in snapshot.documents) {
+    ///Prefetch users
+    await Future.wait(snapshot.documents.map((document) async {
       String userId = document.data["sender"];
       if (!users.containsKey(userId)) {
         users[userId] = await getUserById(userId);
       }
-    }
-//    print(users);
+    }));
+
+//    for (var document in snapshot.documents) {
+//      String userId = document.data["sender"];
+//      if (!users.containsKey(userId)) {
+//        users[userId] = await getUserById(userId);
+//      }
+//    }
+    ///Convert to list
     return snapshot.documents
         .map((document) =>
             Message.fromFirebase(document, users[document.data["sender"]]))

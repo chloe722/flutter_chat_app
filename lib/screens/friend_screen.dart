@@ -118,7 +118,7 @@ class FriendRequestTile extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.check),
                 onPressed: () =>
-                    confirmFriend(user: user, friendId: friendRequest.id),
+                    confirmFriend(user: user, friend: friendRequest),
               ),
             ],
           ),

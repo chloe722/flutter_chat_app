@@ -1,4 +1,5 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flash_chat/model/user.dart';
 
 class RecentChat{
@@ -9,11 +10,11 @@ class RecentChat{
 
   RecentChat({this.friend, this.chatId, this.lastMessage});
 
-  factory RecentChat.fromData({User friend, String chatId, String lastMessage}){
+  factory RecentChat.fromDatabase({DocumentSnapshot document, User friend}){
     return RecentChat(
       friend: friend,
-      chatId: chatId,
-      lastMessage: lastMessage,
+      chatId: document.documentID,
+      lastMessage: document.data["lastMessage"],
     );
   }
 
