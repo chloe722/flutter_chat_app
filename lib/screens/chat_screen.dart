@@ -7,6 +7,8 @@ import 'package:flash_chat/image_manager.dart';
 import 'package:flash_chat/model/message.dart';
 import 'package:flash_chat/model/user.dart';
 import 'package:flash_chat/strings.dart';
+import 'package:flash_chat/utils.dart';
+import 'package:flash_chat/widgets/translation_bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -50,6 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
             "Chat",
             style: kAppBarTextStyle,
           ),
+//          actions: <Widget>[IconButton(icon: Icon(Icons.translate),onPressed: ()=> translateMessage("Hello, How are you?"),)],
           iconTheme: IconThemeData(color: kBrown),
           centerTitle: true,
           backgroundColor: Colors.amber,
@@ -90,7 +93,7 @@ class MessageStream extends StatelessWidget {
         stream: getMessagesByChatId(chatId),
         builder: (context, snapshot) {
           var data = snapshot.data;
-          if(snapshot.hasError) print(snapshot.error);
+          if (snapshot.hasError) print(snapshot.error);
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               return CircularProgressIndicator();
@@ -98,17 +101,18 @@ class MessageStream extends StatelessWidget {
               return snapshot.hasData && data != null
                   ? Expanded(
                       child: ListView.builder(
-                              reverse: true,
-                              shrinkWrap: true,
-                              itemCount: data.length,
-                              itemBuilder: (c, i) {
-                                print('user id: ${user.uid}   list of id: ${data[i].author.id}');
-                                return ChatBubble(
-                                  user: data[i].author,
-                                  isMe: user.uid == data[i].author.id,
-                                  message: data[i],
-                                );
-                              }),
+                          reverse: true,
+                          shrinkWrap: true,
+                          itemCount: data.length,
+                          itemBuilder: (c, i) {
+                            print(
+                                'user id: ${user.uid}   list of id: ${data[i].author.id}');
+                            return ChatBubble(
+                              user: data[i].author,
+                              isMe: user.uid == data[i].author.id,
+                              message: data[i],
+                            );
+                          }),
                     )
                   : Text("Loading");
           }
@@ -124,18 +128,53 @@ class ChatBubble extends StatelessWidget {
   final Message message;
 
   //0 = message, 1=sticker, 2=image
-  Widget _buildText() {
-    return Material(
-      borderRadius: BorderRadius.only(
-          topRight: Radius.circular(isMe ? 0.0 : 30.0),
-          topLeft: Radius.circular(isMe ? 30.0 : 0.0),
-          bottomLeft: Radius.circular(30.0),
-          bottomRight: Radius.circular(30.0)),
-      elevation: 1.0,
-      color: isMe ? Colors.amber[300] : Colors.grey[100],
+  Widget _buildText(BuildContext context) {
+    return Flexible(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(message.content ?? "", softWrap: true),
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Material(
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(isMe ? 0.0 : 30.0),
+                  topLeft: Radius.circular(isMe ? 30.0 : 0.0),
+                  bottomLeft: Radius.circular(30.0),
+                  bottomRight: Radius.circular(30.0)),
+              elevation: 1.0,
+              color: isMe ? Colors.amber[300] : Colors.grey[100],
+              child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    message.content ?? "",
+                    softWrap: true,
+                    maxLines: 10,
+                  )),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: InkWell(
+                onTap: () async {
+                  showModalBottomSheet(
+                      context: context,
+                      isDismissible: true,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                      ),
+                      builder: (context) =>
+                          TranslationBottomSheet(text: message.content));
+                },
+                child: Icon(
+                  Icons.translate,
+                  color: Colors.white,
+                  size: 20.0,
+                ),
+                splashColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -164,12 +203,13 @@ class ChatBubble extends StatelessWidget {
     //TODO
   }
 
-
   Widget _buildAvatar() {
     return Padding(
-      padding: EdgeInsets.only(right: isMe? 0.0 : 8.0, left: isMe? 8.0: 0.0 ),
-      child: CircleAvatar(backgroundImage: user.photoUrl.isEmpty?
-      AssetImage(kPlaceholderImage) : CachedNetworkImageProvider(user.photoUrl)),
+      padding: EdgeInsets.only(right: isMe ? 0.0 : 8.0, left: isMe ? 8.0 : 0.0),
+      child: CircleAvatar(
+          backgroundImage: user.photoUrl.isEmpty
+              ? AssetImage(kPlaceholderImage)
+              : CachedNetworkImageProvider(user.photoUrl)),
     );
   }
 
@@ -178,14 +218,16 @@ class ChatBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: <Widget>[
-          if(isMe == false) _buildAvatar(),
-          if (message.type == 0) _buildText(),
+          if (isMe == false) _buildAvatar(),
+          if (message.type == 0) _buildText(context),
           if (message.type == 1) _builtImage(),
           if (message.type == 2) _builtSticker(),
-          if(isMe == true) _buildAvatar(),
+          if (isMe == true) _buildAvatar(),
         ],
       ),
     );
@@ -212,8 +254,7 @@ class InputMessageTile extends StatelessWidget {
         user: user, type: 0, chatId: chatId, friendId: friendId, content: text);
   }
 
-  void _getGiphy() {
-  }
+  void _getGiphy() {}
 
   Widget _buildCustomButton({IconData icon, Color color, Function onTap}) {
     return Material(

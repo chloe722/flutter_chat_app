@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'settting/name_edit_screen.dart';
 
+//TODO refactor
 class ProfileScreen extends StatelessWidget {
   static String id = 'profile_screen';
 
