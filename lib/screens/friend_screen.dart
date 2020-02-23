@@ -18,7 +18,6 @@ class FriendsScreen extends StatefulWidget {
 }
 
 class _FriendsScreenState extends State<FriendsScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,12 +28,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
             Text('Request', style: TextStyle(fontSize: 20.0)),
             Container(
               margin: EdgeInsets.symmetric(vertical: 16.0),
-              child: StreamBuilder<QuerySnapshot>(
-                  stream: getFriendRequest(widget.user).snapshots(),
+              child: StreamBuilder<List<User>>(
+                  stream: getFriendRequest(widget.user),
                   builder: (context, snapshot) {
-
-                    if (snapshot.hasData && snapshot.data!= null) {
-                      var data = snapshot.data.documents;
+                    if (snapshot.hasData && snapshot.data != null) {
+                      var data = snapshot.data;
 
                       if (data.isEmpty) {
                         return Text('No request');
@@ -43,14 +41,12 @@ class _FriendsScreenState extends State<FriendsScreen> {
                         return ListView.builder(
                           shrinkWrap: true,
                           itemCount: data.length,
-                          itemBuilder: (context, index) => FriendRequestTile(
-                            isFriend: Colors.grey,
-                            friendId: data[index].documentID,
+                          itemBuilder: (context, i) => FriendRequestTile(
+                            friendRequest: data[i],
                             user: widget.user,
                           ),
                         );
                       }
-
                     } else {
                       return Center(
                         child: Container(
@@ -66,7 +62,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
               child: StreamBuilder<List<User>>(
                   stream: getFriendList(widget.user),
                   builder: (context, snapshot) {
-
                     if (snapshot.hasData != null && snapshot.data != null) {
                       var data = snapshot.data;
                       print(" frined list: $data");
@@ -87,7 +82,6 @@ class _FriendsScreenState extends State<FriendsScreen> {
                       return Center(
                         child: Container(child: Text('No friend yet')),
                       );
-
                     }
                   }),
             ),
@@ -99,18 +93,15 @@ class _FriendsScreenState extends State<FriendsScreen> {
 }
 
 class FriendRequestTile extends StatelessWidget {
-  FriendRequestTile({this.snapshot, this.user, this.isFriend, this.friendId});
+  FriendRequestTile({this.friendRequest, this.user});
 
-  final DocumentSnapshot snapshot;
+  final User friendRequest;
   final FirebaseUser user;
-  final Color isFriend;
-  final String friendId;
 
   @override
   Widget build(BuildContext context) {
     return Card(
         elevation: 8.0,
-        color: isFriend,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -122,11 +113,12 @@ class FriendRequestTile extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.clear),
                 onPressed: () =>
-                    rejectFriendRequest(user: user, friendId: friendId),
+                    rejectFriendRequest(user: user, friendId: friendRequest.id),
               ),
               IconButton(
                 icon: Icon(Icons.check),
-                onPressed: () => confirmFriend(user: user, friendId: friendId),
+                onPressed: () =>
+                    confirmFriend(user: user, friendId: friendRequest.id),
               ),
             ],
           ),
@@ -135,20 +127,20 @@ class FriendRequestTile extends StatelessWidget {
             height: 60.0,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(
-                      "https://www.petsworld.in/blog/wp-content/uploads/2014/09/cat.jpg"),
+                  image: NetworkImage(friendRequest.photoUrl??""),
                   fit: BoxFit.contain,
                 ),
                 shape: BoxShape.circle),
           ),
           title: Text(
-            'Ski',
+            friendRequest.name,
             style: TextStyle(
                 color: Colors.grey[800],
                 fontWeight: FontWeight.bold,
                 fontSize: 14.0),
           ),
-          subtitle: Text('Love computer', style: TextStyle(color: Colors.grey)),
+          subtitle:
+              Text(friendRequest.status, style: TextStyle(color: Colors.grey)),
         ));
   }
 }
@@ -164,20 +156,25 @@ class FriendTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         elevation: 8.0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>
-              ChatScreen(user: user, friendId: friend.id, chatId: createCryptoRandomString()))),
+          onTap: () async {
+            String _chatId = await getChatId(user: user, friendId: friend.id);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChatScreen(
+                        user: user, friendId: friend.id, chatId: _chatId)));
+          },
           isThreeLine: true,
-//          trailing: Icon(Icons.people),
           leading: Container(
             width: 60.0,
             height: 60.0,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(
-                      friend.photoUrl),
+                  image: NetworkImage(friend.photoUrl),
                   fit: BoxFit.contain,
                 ),
                 shape: BoxShape.circle),
