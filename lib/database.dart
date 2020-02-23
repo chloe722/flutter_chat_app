@@ -174,8 +174,15 @@ Stream<List<User>> getFriendList(FirebaseUser user) {
   });
 }
 
-CollectionReference getNewUsersList() {
-  return firestore.collection("public_users");
+Stream<List<User>> getNewUsersList()  {
+
+  return firestore.collection("public_users").snapshots().asyncMap((snapshot) async {
+
+    return Future.wait(snapshot.documents.map((document) async {
+      User _user = await getUserById(document.documentID);
+      return _user;
+    }).toList());
+  });
 }
 
 Future<User> getUserById(String id) {

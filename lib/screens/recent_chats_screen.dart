@@ -3,6 +3,7 @@ import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
 import 'package:flash_chat/model/recent_chat.dart';
 import 'package:flash_chat/screens/chat_screen.dart';
+import 'package:flash_chat/strings.dart';
 import 'package:flutter/material.dart';
 
 class RecentChatsScreen extends StatelessWidget {
@@ -26,8 +27,8 @@ class RecentChatsScreen extends StatelessWidget {
                 } else {
                   return ListView.builder(
                     itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) =>
-                        ChatTile(recentChat: snapshot.data[index], user: user),
+                    itemBuilder: (context, i) => RecentChatTile(
+                        recentChat: snapshot.data[i], user: user),
                   );
                 }
               }),
@@ -37,8 +38,8 @@ class RecentChatsScreen extends StatelessWidget {
   }
 }
 
-class ChatTile extends StatelessWidget {
-  ChatTile({this.recentChat, this.user});
+class RecentChatTile extends StatelessWidget {
+  RecentChatTile({this.recentChat, this.user});
 
   final RecentChat recentChat;
   final FirebaseUser user;
@@ -47,7 +48,8 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         elevation: 8.0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
           onTap: () => Navigator.push(
@@ -63,7 +65,9 @@ class ChatTile extends StatelessWidget {
             height: 60.0,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: recentChat.friend.photoUrl.isEmpty? AssetImage("images/mario_profile.png") : NetworkImage(recentChat.friend.photoUrl),
+                  image: recentChat.friend.photoUrl.isEmpty
+                      ? AssetImage(kPlaceholderImage)
+                      : NetworkImage(recentChat.friend.photoUrl),
                   fit: BoxFit.contain,
                 ),
                 shape: BoxShape.circle),

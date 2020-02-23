@@ -6,6 +6,7 @@ import 'package:flash_chat/database.dart';
 import 'package:flash_chat/image_manager.dart';
 import 'package:flash_chat/model/message.dart';
 import 'package:flash_chat/model/user.dart';
+import 'package:flash_chat/strings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -54,6 +55,8 @@ class _ChatScreenState extends State<ChatScreen> {
           backgroundColor: Colors.amber,
         ),
         body: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             MessageStream(
               user: widget.user,
@@ -166,7 +169,7 @@ class ChatBubble extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(right: isMe? 0.0 : 8.0, left: isMe? 8.0: 0.0 ),
       child: CircleAvatar(backgroundImage: user.photoUrl.isEmpty?
-      AssetImage("images/mario_profile.png") : CachedNetworkImageProvider(user.photoUrl)),
+      AssetImage(kPlaceholderImage) : CachedNetworkImageProvider(user.photoUrl)),
     );
   }
 
