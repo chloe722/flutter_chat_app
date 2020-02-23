@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/model/recent_chat.dart';
 import 'package:flash_chat/model/user.dart';
 
 import 'model/message.dart';
@@ -63,10 +65,34 @@ void updateUserFromFirebaseUser(FirebaseUser user) async {
 Stream<DocumentSnapshot> getUserProfileById(FirebaseUser user) {
   return firestore.collection('users').document(user.uid).snapshots();
 }
+//TODO delete
+//Stream<QuerySnapshot> getFullChatsById(FirebaseUser user) {
+//
+//  return firestore.collection('users/${user.uid}/conversation').snapshots();
+//}
 
-Stream<QuerySnapshot> getRecentChatsById(FirebaseUser user) {
-  return firestore.collection('users/${user.uid}/conversation').snapshots();
+
+Stream<List<RecentChat>> getRecentChats({FirebaseUser user}) {
+
+  List<RecentChat> recentChats = [];
+
+  return firestore.collection('users/${user.uid}/conversation')
+      .snapshots()
+      .asyncMap((snapshot) async {
+
+        for (var document in snapshot.documents) {
+
+          String _friendId = document.data["from"];
+          String _chatId = document.documentID;
+          String _lastMessage = document.data["lastMessage"];
+          User _friend = await getUserById(_friendId);
+          recentChats.add(RecentChat.fromData(friend: _friend, chatId: _chatId, lastMessage: _lastMessage));
+        }
+        return recentChats;
+  });
+
 }
+
 
 void sendContent(
     {FirebaseUser user,
@@ -93,10 +119,10 @@ void sendContent(
 
 //TODO pass friend object instad of id
 
-void confirmFiend({FirebaseUser user, String friendId}) {
+void confirmFriend({FirebaseUser user, String friendId}) {
   firestore
       .document("users/${user.uid}/friends/$friendId")
-      .setData({"name": "test", "email": "test@test.com"});
+      .setData({"name": "test", "email": "test@test.com"}); //TODO
 
   firestore
       .document("users/$friendId/friends/${user.uid}")
@@ -124,8 +150,18 @@ CollectionReference getFriendRequest(FirebaseUser user) {
   return firestore.collection("friend_request_to/${user.uid}/from");
 }
 
-CollectionReference getFriendList(FirebaseUser user) {
-  return firestore.collection("users/${user.uid}/friends");
+Stream<List<User>> getFriendList(FirebaseUser user) {
+  List<User> users = [];
+
+  return firestore.collection("users/${user.uid}/friends")
+      .snapshots()
+      .asyncMap((snapshot) async {
+        for (var document in snapshot.documents) {
+          User _user = await getUserById(document.documentID);
+          users.add(_user);
+        }
+        return users;
+  });
 }
 
 CollectionReference getNewUsersList() {
@@ -133,7 +169,7 @@ CollectionReference getNewUsersList() {
 }
 
 Future<User> getUserById(String id) {
-  return firestore.document("user/$id").get().then((i) => User.fromFirebase(i));
+  return firestore.document("public_users/$id").get().then((document) => User.fromFirebase(document));
 }
 
 Stream<List<Message>> getMessagesByChatId(String chatId) {
@@ -147,14 +183,13 @@ Stream<List<Message>> getMessagesByChatId(String chatId) {
       .asyncMap((snapshot) async {
     ///Prefetch users (return future)
     for (var document in snapshot.documents) {
-      print(document.data);
 
       String userId = document.data["sender"];
       if (!users.containsKey(userId)) {
         users[userId] = await getUserById(userId);
       }
     }
-    print(users);
+//    print(users);
     return snapshot.documents
         .map((document) =>
             Message.fromFirebase(document, users[document.data["sender"]]))

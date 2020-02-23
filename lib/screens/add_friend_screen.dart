@@ -17,10 +17,10 @@ class AddFriendScreen extends StatelessWidget {
           child: StreamBuilder<QuerySnapshot>(
             stream: getNewUsersList().snapshots(),
             builder: (context, snapshot) {
-              var data = snapshot.data?.documents;
 
               if (snapshot.connectionState == ConnectionState.waiting)CircularProgressIndicator();
-              if (data != null) {
+              if (snapshot.hasData && snapshot.data.documents != null ) {
+                final data = snapshot.data.documents;
                 return ListView.builder(
                   itemCount: data.length,
                     itemBuilder: (context, i) => AddFriendTile(user: user, snapshot: data[i]),shrinkWrap: true,);
@@ -62,7 +62,7 @@ class AddFriendTile extends StatelessWidget {
             ),
 
           title: Text(
-            snapshot.data["name"],
+            snapshot.data["name"]??"",
             style: TextStyle(
                 color: Colors.grey[800],
                 fontWeight: FontWeight.bold,

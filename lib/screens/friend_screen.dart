@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
+import 'package:flash_chat/model/user.dart';
+import 'package:flash_chat/utils.dart';
 import 'package:flutter/material.dart';
 
 import 'chat_screen.dart';
@@ -16,7 +18,6 @@ class FriendsScreen extends StatefulWidget {
 }
 
 class _FriendsScreenState extends State<FriendsScreen> {
-//  String frinedid = '0FPux2aAqEYx4hCDzPxZDzCy3wE3'; //TODO Updated with contact id or object
 
   @override
   Widget build(BuildContext context) {
@@ -62,12 +63,12 @@ class _FriendsScreenState extends State<FriendsScreen> {
             Text('Friends', style: TextStyle(fontSize: 20.0)),
             Container(
               margin: EdgeInsets.symmetric(vertical: 16.0),
-              child: StreamBuilder<QuerySnapshot>(
-                  stream: getFriendList(widget.user).snapshots(),
+              child: StreamBuilder<List<User>>(
+                  stream: getFriendList(widget.user),
                   builder: (context, snapshot) {
 
                     if (snapshot.hasData != null && snapshot.data != null) {
-                      var data = snapshot.data.documents;
+                      var data = snapshot.data;
                       print(" frined list: $data");
 
                       if (data.isEmpty) {
@@ -78,7 +79,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
                           itemCount: data.length,
                           itemBuilder: (context, i) => FriendTile(
                               user: widget.user,
-                              snapshot: data[i],
+                              friend: data[i],
                               isFriend: Colors.greenAccent[100]),
                         );
                       }
@@ -125,7 +126,7 @@ class FriendRequestTile extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.check),
-                onPressed: () => confirmFiend(user: user, friendId: friendId),
+                onPressed: () => confirmFriend(user: user, friendId: friendId),
               ),
             ],
           ),
@@ -153,12 +154,11 @@ class FriendRequestTile extends StatelessWidget {
 }
 
 class FriendTile extends StatelessWidget {
-  FriendTile({this.snapshot, this.user, this.isFriend, this.friendId});
+  FriendTile({this.friend, this.user, this.isFriend});
 
-  final DocumentSnapshot snapshot;
+  final User friend;
   final FirebaseUser user;
   final Color isFriend;
-  final String friendId;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +167,8 @@ class FriendTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(user: user, friendId: ,))),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>
+              ChatScreen(user: user, friendId: friend.id, chatId: createCryptoRandomString()))),
           isThreeLine: true,
 //          trailing: Icon(Icons.people),
           leading: Container(
@@ -176,19 +177,19 @@ class FriendTile extends StatelessWidget {
             decoration: BoxDecoration(
                 image: DecorationImage(
                   image: NetworkImage(
-                      "https://www.petsworld.in/blog/wp-content/uploads/2014/09/cat.jpg"),
+                      friend.photoUrl),
                   fit: BoxFit.contain,
                 ),
                 shape: BoxShape.circle),
           ),
           title: Text(
-            'Ski',
+            friend.name,
             style: TextStyle(
                 color: Colors.grey[800],
                 fontWeight: FontWeight.bold,
                 fontSize: 14.0),
           ),
-          subtitle: Text('Love computer', style: TextStyle(color: Colors.grey)),
+          subtitle: Text(friend.status, style: TextStyle(color: Colors.grey)),
         ));
   }
 }
