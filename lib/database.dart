@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,6 +63,7 @@ void updateUserFromFirebaseUser(FirebaseUser user) async {
 }
 
 Stream<DocumentSnapshot> getUserProfileById(FirebaseUser user) {
+
   return firestore.collection('users').document(user.uid).snapshots();
 }
 
@@ -92,7 +92,6 @@ Future<String> getChatId({FirebaseUser user, String friendId}) async {
     return data.first.documentID;
   } else {
     print("new chatId");
-
     return createCryptoRandomString();
   }
 }

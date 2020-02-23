@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
 import 'package:flash_chat/model/user.dart';
-import 'package:flash_chat/utils.dart';
 import 'package:flutter/material.dart';
 
 import 'chat_screen.dart';
@@ -174,7 +172,7 @@ class FriendTile extends StatelessWidget {
             height: 60.0,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(friend.photoUrl),
+                  image: friend.photoUrl.isEmpty? AssetImage("images/mario_profile.png"):NetworkImage(friend.photoUrl),
                   fit: BoxFit.contain,
                 ),
                 shape: BoxShape.circle),

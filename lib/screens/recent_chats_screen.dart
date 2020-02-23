@@ -47,8 +47,7 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         elevation: 8.0,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
           onTap: () => Navigator.push(
@@ -59,13 +58,12 @@ class ChatTile extends StatelessWidget {
                       friendId: recentChat.friend.id,
                       chatId: recentChat.chatId))),
           isThreeLine: true,
-//        trailing: Icon(Icons.person),
           leading: Container(
             width: 60.0,
             height: 60.0,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(recentChat.friend.photoUrl),
+                  image: recentChat.friend.photoUrl.isEmpty? AssetImage("images/mario_profile.png") : NetworkImage(recentChat.friend.photoUrl),
                   fit: BoxFit.contain,
                 ),
                 shape: BoxShape.circle),

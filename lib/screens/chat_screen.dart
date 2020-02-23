@@ -5,6 +5,7 @@ import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
 import 'package:flash_chat/image_manager.dart';
 import 'package:flash_chat/model/message.dart';
+import 'package:flash_chat/model/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -100,8 +101,9 @@ class MessageStream extends StatelessWidget {
                               itemBuilder: (c, i) {
                                 print('user id: ${user.uid}   list of id: ${data[i].author.id}');
                                 return ChatBubble(
+                                  user: data[i].author,
                                   isMe: user.uid == data[i].author.id,
-                                    message: data[i],
+                                  message: data[i],
                                 );
                               }),
                     )
@@ -112,12 +114,13 @@ class MessageStream extends StatelessWidget {
 }
 
 class ChatBubble extends StatelessWidget {
-  ChatBubble({this.isMe, this.message});
+  ChatBubble({this.user, this.isMe, this.message});
 
-  //0 = message, 1=sticker, 2=image
+  final User user;
   final bool isMe;
   final Message message;
 
+  //0 = message, 1=sticker, 2=image
   Widget _buildText() {
     return Material(
       borderRadius: BorderRadius.only(
@@ -158,19 +161,28 @@ class ChatBubble extends StatelessWidget {
     //TODO
   }
 
+
+  Widget _buildAvatar() {
+    return Padding(
+      padding: EdgeInsets.only(right: isMe? 0.0 : 8.0, left: isMe? 8.0: 0.0 ),
+      child: CircleAvatar(backgroundImage: user.photoUrl.isEmpty?
+      AssetImage("images/mario_profile.png") : CachedNetworkImageProvider(user.photoUrl)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-      child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: <Widget>[
-          Text(message.author.name ?? ""),
-          SizedBox(height: 5.0),
+          if(isMe == false) _buildAvatar(),
           if (message.type == 0) _buildText(),
           if (message.type == 1) _builtImage(),
           if (message.type == 2) _builtSticker(),
+          if(isMe == true) _buildAvatar(),
         ],
       ),
     );
@@ -191,7 +203,6 @@ class InputMessageTile extends StatelessWidget {
   String friendId;
 
   //0 = message, 1=image, 2=sticker
-
   void _send() {
     messageTextEditingController.clear();
     sendContent(
