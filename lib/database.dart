@@ -178,14 +178,15 @@ Stream<List<User>> getFriendList(FirebaseUser user) {
   });
 }
 
-
 //TODO add filter friends
 Stream<List<AvailableUsers>> getAvailableUsersList({FirebaseUser user}) {
   var usersStream = firestore
       .collection("public_users")
       .snapshots()
       .asyncMap((snapshot) async {
-    return Future.wait(snapshot.documents.where((document)=> document.documentID != user.uid).map((document) async {
+    return Future.wait(snapshot.documents
+        .where((document) => document.documentID != user.uid)
+        .map((document) async {
       User _user = await getUserById(document.documentID);
       return _user;
     }).toList());
@@ -193,12 +194,23 @@ Stream<List<AvailableUsers>> getAvailableUsersList({FirebaseUser user}) {
 
   var requestStream =
       firestore.collection("friend_request_from/${user.uid}/to").snapshots();
-  return CombineLatestStream.combine2(usersStream, requestStream,
-      (List<User> allUsers, QuerySnapshot requestUsers) {
-    return allUsers.map((user) {
+
+  var friendsStream =
+      firestore.collection("users/${user.uid}/friends").snapshots();
+
+  return CombineLatestStream.combine3(usersStream, requestStream, friendsStream,
+      (List<User> allUsers, QuerySnapshot requestUsers,
+          QuerySnapshot friendsStream) {
+    return allUsers.where((user) {
+      return friendsStream.documents
+              .where((friend) => friend.documentID != user.id)
+              .length >
+          0;
+    }).map((user) {
       bool requestHasBeenSent = requestUsers.documents
               .where((friendRequest) => friendRequest.documentID == user.id)
-              .length > 0;
+              .length >
+          0;
 
       return AvailableUsers(user: user, requestSent: requestHasBeenSent);
     }).toList();
