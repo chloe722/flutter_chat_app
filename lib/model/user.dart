@@ -16,7 +16,7 @@ class User {
   factory User.fromFirebase(DocumentSnapshot snapshot){
     return User(
       id: snapshot.documentID,
-      name: snapshot.data["name"],
+      name: snapshot.data["name"]??"",
       userName: snapshot.data["userName"],
       phone: snapshot.data["phone"]??"",
       photoUrl: snapshot.data["photoUrl"]??"",

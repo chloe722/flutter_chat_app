@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/database.dart';
+import 'package:flash_chat/model/avaliable_users.dart';
 import 'package:flash_chat/model/user.dart';
 import 'package:flash_chat/strings.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,8 @@ class AddFriendScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      child: StreamBuilder<List<User>>(
-          stream: getNewUsersList(),
+      child: StreamBuilder<List<AvailableUsers>>(
+          stream: getAvailableUsersList(user: user),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting)
               CircularProgressIndicator();
@@ -28,7 +29,7 @@ class AddFriendScreen extends StatelessWidget {
                 shrinkWrap: true,
               );
             } else {
-              return Text("No users join at the moment");
+              return Center(child: Text("No users join at the moment"));
             }
           }),
     ));
@@ -38,7 +39,7 @@ class AddFriendScreen extends StatelessWidget {
 class AddFriendTile extends StatelessWidget {
   AddFriendTile({this.friend, this.user});
 
-  final User friend;
+  final AvailableUsers friend;
   final FirebaseUser user;
 
   @override
@@ -51,8 +52,8 @@ class AddFriendTile extends StatelessWidget {
           contentPadding:
               EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
           trailing: IconButton(
-              icon: Icon(Icons.person_add),
-              onPressed: () => addFriend(user: user, friendId: friend.id)),
+              icon: friend.requestSent? Icon(Icons.send, color: Colors.amber) : Icon(Icons.person_add, color: Colors.green),
+              onPressed: friend.requestSent? null : () => addFriend(user: user, friendId: friend.user.id)),
           leading: Container(
             width: 80.0,
             height: 100.0,
@@ -60,20 +61,20 @@ class AddFriendTile extends StatelessWidget {
                 image: DecorationImage(
                     alignment: Alignment.center,
                     fit: BoxFit.cover,
-                    image: friend.photoUrl.isEmpty
+                    image: friend.user.photoUrl.isEmpty
                         ? AssetImage(kPlaceholderImage)
-                        : CachedNetworkImageProvider(friend.photoUrl)),
+                        : CachedNetworkImageProvider(friend.user.photoUrl)),
                 shape: BoxShape.circle),
           ),
 
           title: Text(
-            friend.name,
+            friend.user.name,
             style: TextStyle(
                 color: Colors.grey[800],
                 fontWeight: FontWeight.bold,
                 fontSize: 14.0),
           ),
-          subtitle: Text(friend.status, style: TextStyle(color: Colors.grey)),
+          subtitle: Text(friend.user.status, style: TextStyle(color: Colors.grey)),
         ));
   }
 }

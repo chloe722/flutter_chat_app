@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/add_friend_screen.dart';
 import 'package:flash_chat/screens/friend_screen.dart';
 import 'package:flash_chat/screens/list_wheel_scroll_view.dart';
@@ -28,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
         user: widget.user,
       ),
       FriendsScreen(user: widget.user),
-//      ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
+      ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
       CallSample(),
 //      ListWheelScrollViewScreen(),
     ];
@@ -72,7 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
 //        ),
         ),
         bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.shifting,
           currentIndex: _currentIndex,
+          selectedItemColor: kBrown,
+          unselectedItemColor: Colors.grey,
           onTap: (int index) {
             setState(() {
               _currentIndex = index;
@@ -83,8 +87,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(Icons.chat), title: Text("Chats")),
             BottomNavigationBarItem(
                 icon: Icon(Icons.people), title: Text("Friends")),
+
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), title: Text("Settings"))
+                icon: Icon(Icons.settings), title: Text("Settings")),
+
+            BottomNavigationBarItem(
+                icon: Icon(Icons.phone), title: Text("WebRTC"))
           ],
         ),
         body: _widgets[_currentIndex]

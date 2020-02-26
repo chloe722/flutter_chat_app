@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/model/avaliable_users.dart';
 import 'package:flash_chat/model/recent_chat.dart';
 import 'package:flash_chat/model/user.dart';
 import 'package:flash_chat/utils.dart';
-
 import 'model/message.dart';
+import 'package:rxdart/streams.dart';
 
 Firestore firestore = Firestore.instance;
 
@@ -63,7 +64,6 @@ void updateUserFromFirebaseUser(FirebaseUser user) async {
 }
 
 Stream<DocumentSnapshot> getUserProfileById(FirebaseUser user) {
-
   return firestore.collection('users').document(user.uid).snapshots();
 }
 
@@ -133,6 +133,7 @@ void confirmFriend({FirebaseUser user, User friend}) {
 
 void clearFriendRequest({FirebaseUser user, String friendId}) {
   firestore.document("friend_request_to/${user.uid}/from/$friendId").delete();
+  firestore.document("friend_request_from/$friendId/to/${user.uid}").delete();
 }
 
 void rejectFriendRequest({FirebaseUser user, String friendId}) {
@@ -147,7 +148,10 @@ void unFriend({FirebaseUser user, String friendId}) {
 void addFriend({FirebaseUser user, String friendId}) {
   firestore
       .document("friend_request_to/$friendId/from/${user.uid}")
-      .setData({"name": user.displayName, "email": user.email});
+      .setData({"timestamp": FieldValue.serverTimestamp()});
+  firestore
+      .document("friend_request_from/${user.uid}/to/$friendId")
+      .setData({"timestamp": FieldValue.serverTimestamp()});
 }
 
 Stream<List<User>> getFriendRequest(FirebaseUser user) {
@@ -174,14 +178,30 @@ Stream<List<User>> getFriendList(FirebaseUser user) {
   });
 }
 
-Stream<List<User>> getNewUsersList()  {
 
-  return firestore.collection("public_users").snapshots().asyncMap((snapshot) async {
-
-    return Future.wait(snapshot.documents.map((document) async {
+//TODO add filter friends
+Stream<List<AvailableUsers>> getAvailableUsersList({FirebaseUser user}) {
+  var usersStream = firestore
+      .collection("public_users")
+      .snapshots()
+      .asyncMap((snapshot) async {
+    return Future.wait(snapshot.documents.where((document)=> document.documentID != user.uid).map((document) async {
       User _user = await getUserById(document.documentID);
       return _user;
     }).toList());
+  });
+
+  var requestStream =
+      firestore.collection("friend_request_from/${user.uid}/to").snapshots();
+  return CombineLatestStream.combine2(usersStream, requestStream,
+      (List<User> allUsers, QuerySnapshot requestUsers) {
+    return allUsers.map((user) {
+      bool requestHasBeenSent = requestUsers.documents
+              .where((friendRequest) => friendRequest.documentID == user.id)
+              .length > 0;
+
+      return AvailableUsers(user: user, requestSent: requestHasBeenSent);
+    }).toList();
   });
 }
 
