@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/screens/add_friend_screen.dart';
 import 'package:flash_chat/screens/friend_screen.dart';
+import 'package:flash_chat/screens/list_wheel_scroll_view.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flash_chat/screens/recent_chats_screen.dart';
+import 'package:flash_chat/webrtc/call_sample.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,7 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
         user: widget.user,
       ),
       FriendsScreen(user: widget.user),
-      ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
+//      ProfileScreen(user: widget.user, logOutCallback: widget.logOutCallback),
+      CallSample(),
+//      ListWheelScrollViewScreen(),
     ];
     super.initState();
   }

@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/profile_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
@@ -7,7 +8,12 @@ import 'package:flutter/material.dart';
 
 import 'auth.dart';
 
-void main() => runApp(FlashChat());
+void main() {
+  Crashlytics.instance.enableInDevMode = true;
+
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  runApp(FlashChat());
+}
 
 class FlashChat extends StatelessWidget {
   @override
