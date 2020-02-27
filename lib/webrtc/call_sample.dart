@@ -28,7 +28,7 @@ class _CallSampleState extends State<CallSample> {
     _connect();
   }
 
-  initRenderers() async {
+  void initRenderers() async {
     await _localRenderer.initialize();
     await _remoteRenderer.initialize();
   }
@@ -36,6 +36,7 @@ class _CallSampleState extends State<CallSample> {
   @override
   deactivate() {
     super.deactivate();
+    print("singnaling: $_signaling");
     if (_signaling != null) _signaling.close();
     _localRenderer.dispose();
     _remoteRenderer.dispose();

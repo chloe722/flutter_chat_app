@@ -49,22 +49,16 @@ class AddFriendTile extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: ListTile(
+          onTap: () {print('open profile');},
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
+              EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
           trailing: IconButton(
               icon: friend.requestSent? Icon(Icons.send, color: Colors.amber) : Icon(Icons.person_add, color: Colors.green),
               onPressed: friend.requestSent? null : () => addFriend(user: user, friendId: friend.user.id)),
-          leading: Container(
-            width: 80.0,
-            height: 100.0,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    alignment: Alignment.center,
-                    fit: BoxFit.cover,
-                    image: friend.user.photoUrl.isEmpty
+          leading: CircleAvatar(
+          backgroundImage: friend.user.photoUrl.isEmpty
                         ? AssetImage(kPlaceholderImage)
-                        : CachedNetworkImageProvider(friend.user.photoUrl)),
-                shape: BoxShape.circle),
+                        : CachedNetworkImageProvider(friend.user.photoUrl),
           ),
 
           title: Text(

@@ -9,16 +9,20 @@ typedef void OnOpenCallback();
 
 class SimpleWebSocket {
   String _url;
-  var _socket;
+  String _host;
+  int _port;
+  WebSocket _socket;
   OnOpenCallback onOpen;
   OnMessageCallback onMessage;
   OnCloseCallback onClose;
   SimpleWebSocket(this._url);
+//  SimpleWebSocket(this._host, this._port);
 
   connect() async {
     try {
       _socket = await WebSocket.connect(_url);
-//      socket = await _connectForSelfSignedCert(_host, _port);
+//      _socket = await _connectForSelfSignedCert(_host, _port);
+      print("sockets: $_socket");
       this?.onOpen();
       _socket.listen((data) {
         this?.onMessage(data);
@@ -38,7 +42,8 @@ class SimpleWebSocket {
   }
 
   close() {
-    _socket.close();
+    print('socket in close: ${_socket}');
+    if(_socket != null) _socket.close();
   }
 
   Future<WebSocket> _connectForSelfSignedCert(String host, int port) async {
@@ -53,8 +58,11 @@ class SimpleWebSocket {
         return true;
       };
 
+//      var _url = 'https://$host:$port/ws';
+      var _url = 'https://$host:$port';
+      print("url: $_url");
       HttpClientRequest request = await client.getUrl(
-          Uri.parse('https://$host:$port/ws')); // form the correct url here
+          Uri.parse(_url)); // form the correct url here
       request.headers.add('Connection', 'Upgrade');
       request.headers.add('Upgrade', 'websocket');
       request.headers.add(

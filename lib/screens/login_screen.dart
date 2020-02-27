@@ -25,17 +25,28 @@ class _LoginScreenState extends State<LoginScreen> {
   String email = "";
   String password = "";
 
-  void validateAndSubmit() async {
+  void validateAndSubmit({bool isGoogleLogin}) async {
     setState(() {
       _errorMsg = "";
       _isLoading = true;
     });
 
     try {
-      _user = await widget.auth.logIn(email: email, password: password);
-      setState(() {
-        _isLoading = false;
-      });
+
+      if (isGoogleLogin) {
+        _user = await widget.auth.googleLogIn().catchError((e) => print("google login error: $e"));
+        setState(() {
+          _isLoading = false;
+        });
+
+      } else {
+        _user = await widget.auth.logIn(email: email, password: password);
+        setState(() {
+          _isLoading = false;
+        });
+      }
+
+
 
       if (_user != null && _user.uid != null && _user.uid.length > 0) {
         widget.logInCallback();
@@ -98,7 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
             RoundButton(
                 color: Colors.lightBlueAccent,
                 label: kLogin,
-                onPressed: () => validateAndSubmit()),
+                onPressed: () => validateAndSubmit(isGoogleLogin: false)),
             Row(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -124,12 +135,8 @@ class _LoginScreenState extends State<LoginScreen> {
             RoundButton(
                 color: Colors.deepOrangeAccent,
                 label: kGoogleLogin,
-                onPressed: () =>
-                    widget.auth.googleLogIn().then((FirebaseUser user) {
-                      print(user);
-                      Navigator.pushNamed(context, ProfileScreen.id,
-                          arguments: user);
-                    }).catchError((e) => print(e))),
+                onPressed: () => validateAndSubmit(isGoogleLogin: true),
+            ),
           ],
         ),
       ),

@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "169320224254-6tgebuf3gvspk1qo0j1hsmproaso4pvg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.appbrewery.flash_chat",
+            "certificate_hash": "0cf207db0782618b6cc9ba83d170ffbf611a5d43"
+          }
+        },
+        {
           "client_id": "169320224254-mee16bvskat878lp01uvbp06vu9vei6i.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +38,13 @@
             {
               "client_id": "169320224254-mee16bvskat878lp01uvbp06vu9vei6i.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "169320224254-ojuliu8vkvp521i9a3hebndregsp4i61.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.appbrewery.flashChat"
+              }
             }
           ]
         }

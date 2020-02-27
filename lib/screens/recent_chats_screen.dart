@@ -20,9 +20,11 @@ class RecentChatsScreen extends StatelessWidget {
           child: StreamBuilder<List<RecentChat>>(
               stream: getRecentChats(user: user),
               builder: (context, snapshot) {
+                if(snapshot.connectionState == ConnectionState.waiting) CircularProgressIndicator();
+
                 if (!snapshot.hasData) {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child:  Center(child: Text(" No chats yet"),),
                   );
                 } else {
                   return ListView.builder(

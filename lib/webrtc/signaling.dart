@@ -36,6 +36,8 @@ class Signaling {
   var _sessionId;
   var _host;
   var _port = 4442;
+//  var _port = 8086;
+
   var _peerConnections = new Map<String, RTCPeerConnection>();
   var _dataChannels = new Map<String, RTCDataChannel>();
   var _remoteCandidates = [];
