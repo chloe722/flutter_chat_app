@@ -1,10 +1,10 @@
 import 'package:flash_chat/model/user.dart';
 
-class AvailableUsers {
+class AvailableUser {
 
   User user;
   bool requestSent;
 
-  AvailableUsers({this.user, this.requestSent});
+  AvailableUser({this.user, this.requestSent});
 
 }

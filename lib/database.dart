@@ -178,8 +178,7 @@ Stream<List<User>> getFriendList(FirebaseUser user) {
   });
 }
 
-//TODO add filter friends
-Stream<List<AvailableUsers>> getAvailableUsersList({FirebaseUser user}) {
+Stream<List<AvailableUser>> getAvailableUsersList({FirebaseUser user}) {
   var usersStream = firestore
       .collection("public_users")
       .snapshots()
@@ -192,29 +191,44 @@ Stream<List<AvailableUsers>> getAvailableUsersList({FirebaseUser user}) {
     }).toList());
   });
 
-  var requestStream =
+  var _requestStream =
       firestore.collection("friend_request_from/${user.uid}/to").snapshots();
 
-  var friendsStream =
+  var _friendsStream =
       firestore.collection("users/${user.uid}/friends").snapshots();
 
-  return CombineLatestStream.combine3(usersStream, requestStream, friendsStream,
+  return CombineLatestStream.combine3(usersStream, _requestStream, _friendsStream,
       (List<User> allUsers, QuerySnapshot requestUsers,
-          QuerySnapshot friendsStream) {
-    return allUsers.where((user) {
-      return friendsStream.documents
-              .where((friend) => friend.documentID != user.id)
-              .length >
-          0;
-    }).map((user) {
-      bool requestHasBeenSent = requestUsers.documents
-              .where((friendRequest) => friendRequest.documentID == user.id)
-              .length >
-          0;
+          QuerySnapshot friendsSnapshot) {
 
-      return AvailableUsers(user: user, requestSent: requestHasBeenSent);
-    }).toList();
+    return getAvailableUsers(
+        allUsers, requestUsers.documents, friendsSnapshot.documents);
   });
+}
+
+List<AvailableUser> getAvailableUsers(
+    List<User> allUsers,
+    List<DocumentSnapshot> requestUsers,
+    List<DocumentSnapshot> friendsSnapshot) {
+  return allUsers
+      .where((user) => !_isFriend(user, friendsSnapshot))
+      .map((user) => AvailableUser(
+          user: user, requestSent: _requestHasBeenSent(user, requestUsers)))
+      .toList();
+}
+
+bool _isFriend(User user, List<DocumentSnapshot> friendsSnapshot) {
+  return friendsSnapshot
+          .where((friend) => friend.documentID != user.id)
+          .length >
+      0;
+}
+
+bool _requestHasBeenSent(User user, List<DocumentSnapshot> requestUsers) {
+  return requestUsers
+          .where((requestUser) => requestUser.documentID == user.id)
+          .length >
+      0;
 }
 
 Future<User> getUserById(String id) {
