@@ -92,7 +92,7 @@ Future<String> getChatId({FirebaseUser user, String friendId}) async {
     return data.first.documentID;
   } else {
     print("new chatId");
-    return createCryptoRandomString();
+    return ([user.uid, friendId]..sort()).join(","); // Prevent duplicate chats
   }
 }
 

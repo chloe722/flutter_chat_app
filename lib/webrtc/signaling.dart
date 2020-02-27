@@ -35,8 +35,8 @@ class Signaling {
   SimpleWebSocket _socket;
   var _sessionId;
   var _host;
-  var _port = 4442;
-//  var _port = 8086;
+//  var _port = 4442;
+  var _port = 443;
 
   var _peerConnections = new Map<String, RTCPeerConnection>();
   var _dataChannels = new Map<String, RTCDataChannel>();
@@ -261,7 +261,8 @@ class Signaling {
   }
 
   void connect() async {
-    var url = 'ws://$_host:$_port';
+//    var url = 'ws://$_host:$_port';
+    var url = "ws://chat-backend-f.herokuapp.com";
     _socket = SimpleWebSocket(url);
 
     print('connect to $url');
