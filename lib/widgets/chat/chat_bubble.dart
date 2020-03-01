@@ -70,91 +70,11 @@ class _ChatBubbleState extends State<ChatBubble>
     super.dispose();
   }
 
-  Widget _buildText(BuildContext context) {
-    return Flexible(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Material(
-              borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(widget.isMe ? 0.0 : 30.0),
-                  topLeft: Radius.circular(widget.isMe ? 30.0 : 0.0),
-                  bottomLeft: Radius.circular(30.0),
-                  bottomRight: Radius.circular(30.0)),
-              elevation: 1.0,
-              color: widget.isMe ? Colors.amber[300] : Colors.grey[100],
-              child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text(
-                    widget.message.content ?? "",
-                    softWrap: true,
-                    maxLines: 10,
-                  )),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 8.0),
-              child: InkWell(
-                onTap: () async {
-                  showModalBottomSheet(
-                      context: context,
-                      isDismissible: true,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                      ),
-                      builder: (context) =>
-                          TranslationBottomSheet(text: widget.message.content));
-                },
-                child: Icon(
-                  Icons.translate,
-                  color: Colors.white,
-                  size: 20.0,
-                ),
-                splashColor: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _builtImage() {
-    return CachedNetworkImage(
-        placeholder: (context, url) => Container(
-            height: 100.0,
-            width: 100.0,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            child: Center(child: CircularProgressIndicator())),
-        errorWidget: (context, url, error) => Material(
-              child: Text("Image is not available"),
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-        width: 200.0,
-        height: 200.0,
-        fit: BoxFit.cover,
-        imageUrl: widget.message.content ?? "");
-  }
 
   Widget _builtSticker() {
     //TODO
   }
 
-  Widget _buildAvatar() {
-    return Padding(
-      padding: EdgeInsets.only(
-          right: widget.isMe ? 0.0 : 8.0, left: widget.isMe ? 8.0 : 0.0),
-      child: CircleAvatar(
-          backgroundImage: widget.user.photoUrl.isEmpty
-              ? AssetImage(kPlaceholderImage)
-              : CachedNetworkImageProvider(widget.user.photoUrl)),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,11 +86,11 @@ class _ChatBubbleState extends State<ChatBubble>
         mainAxisAlignment:
             widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: <Widget>[
-          if (widget.isMe == false) _buildAvatar(),
-          if (widget.message.type == 0) _buildText(context),
-          if (widget.message.type == 1) _builtImage(),
+          if (widget.isMe == false) BuildAvatar(name: widget.user.name, image: widget.user.photoUrl, isMe: widget.isMe),
+          if (widget.message.type == 0) BuildText(text: widget.message.content,isMe: widget.isMe),
+          if (widget.message.type == 1) BuildImage(image: widget.message.content),
           if (widget.message.type == 2) _builtSticker(),
-          if (widget.isMe == true) _buildAvatar(),
+          if (widget.isMe == true) BuildAvatar(name: widget.user.name, image: widget.user.photoUrl, isMe: widget.isMe),
         ],
       ),
     );
@@ -186,3 +106,114 @@ class _ChatBubbleState extends State<ChatBubble>
     }
   }
 }
+
+
+class BuildText extends StatelessWidget {
+  BuildText({this.text, this.isMe});
+
+  final String text;
+  final bool isMe;
+
+  @override
+  Widget build(BuildContext context) {
+      return Flexible(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Material(
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(isMe ? 0.0 : 30.0),
+                    topLeft: Radius.circular(isMe ? 30.0 : 0.0),
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0)),
+                elevation: 1.0,
+                color: isMe ? Colors.amber[300] : Colors.grey[100],
+                child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      text ?? "",
+                      softWrap: true,
+                      maxLines: 10,
+                    )),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 8.0),
+                child: InkWell(
+                  onTap: () async {
+                    showModalBottomSheet(
+                        context: context,
+                        isDismissible: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                        ),
+                        builder: (context) =>
+                            TranslationBottomSheet(text: text));
+                  },
+                  child: Icon(
+                    Icons.translate,
+                    color: Colors.white,
+                    size: 20.0,
+                  ),
+                  splashColor: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+  }
+}
+
+
+class BuildImage extends StatelessWidget {
+  BuildImage({this.image});
+
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+      return CachedNetworkImage(
+          placeholder: (context, url) => Container(
+              height: 100.0,
+              width: 100.0,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Center(child: CircularProgressIndicator())),
+          errorWidget: (context, url, error) => Material(
+            child: Text("Image is not available"),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          width: 200.0,
+          height: 200.0,
+          fit: BoxFit.cover,
+          imageUrl: image ?? "");
+  }
+}
+
+
+class BuildAvatar extends StatelessWidget {
+  BuildAvatar({this.name, this.image, this.isMe});
+
+  final String name;
+  final String image;
+  final bool isMe;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.only(
+            right: isMe ? 0.0 : 8.0, left: isMe ? 8.0 : 0.0),
+        child: CircleAvatar(
+            backgroundImage: image.isEmpty
+                ? AssetImage(kPlaceholderImage)
+                : CachedNetworkImageProvider(image)),
+      );
+  }
+}
+
