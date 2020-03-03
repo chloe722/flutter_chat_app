@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/model/message.dart';
 import 'package:flash_chat/model/user.dart';
 import 'package:flash_chat/widgets/translation_bottom_sheet.dart';
@@ -130,7 +131,7 @@ class BuildText extends StatelessWidget {
                     bottomLeft: Radius.circular(30.0),
                     bottomRight: Radius.circular(30.0)),
                 elevation: 1.0,
-                color: isMe ? Colors.amber[300] : Colors.grey[100],
+                color: isMe ? kBlurYellow : Colors.grey[100],
                 child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(

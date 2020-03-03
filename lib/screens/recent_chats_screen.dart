@@ -14,7 +14,7 @@ class RecentChatsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kDodgerBlue,
+      backgroundColor: kSalmon,
       body: Center(
         child: Container(
           child: StreamBuilder<List<RecentChat>>(

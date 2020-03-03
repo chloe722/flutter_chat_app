@@ -22,9 +22,12 @@ class InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
-      elevation: 5.0,
+      elevation: 10.0,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20.0))),
       child: Container(
         child: ListView(
+          primary: false,
           shrinkWrap: true,
           children: <Widget>[
             ListTile(

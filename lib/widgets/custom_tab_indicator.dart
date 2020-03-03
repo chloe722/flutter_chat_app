@@ -20,7 +20,7 @@ class CustomTabIndicator extends Decoration {
   ///
   /// The [TabBar.indicatorSize] property can be used to define the
   /// tab indicator's bounds in terms of its (centered) tab widget with
-  /// [TabIndicatorSize.label], or the entire tab with [TabIndicatorSize.tab].
+  /// [TabIndicatorSize.text], or the entire tab with [TabIndicatorSize.tab].
   final EdgeInsetsGeometry insets;
 
   @override

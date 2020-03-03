@@ -41,7 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       child: Scaffold(
-        backgroundColor: kDodgerBlue,
+        backgroundColor: kGreyBlack,
         appBar: AppBar(
           leading: null,
           title: Text(
@@ -51,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
 //          actions: <Widget>[IconButton(icon: Icon(Icons.translate),onPressed: ()=> translateMessage("Hello, How are you?"),)],
           iconTheme: IconThemeData(color: kBrown),
           centerTitle: true,
-          backgroundColor: Colors.amber,
+          backgroundColor: kBlurYellow,
         ),
         body: Column(
           mainAxisSize: MainAxisSize.max,
