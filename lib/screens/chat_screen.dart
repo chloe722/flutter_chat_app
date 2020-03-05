@@ -48,7 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
             "Chat",
             style: kAppBarTextStyle,
           ),
-//          actions: <Widget>[IconButton(icon: Icon(Icons.translate),onPressed: ()=> translateMessage("Hello, How are you?"),)],
+          actions: <Widget>[IconButton(icon: Icon(Icons.translate),onPressed: (){})],
           iconTheme: IconThemeData(color: kBrown),
           centerTitle: true,
           backgroundColor: kBlurYellow,
