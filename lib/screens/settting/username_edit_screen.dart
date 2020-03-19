@@ -13,13 +13,15 @@ class UsernameEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: kSalmon,
         appBar: AppBar(
+          backgroundColor: kSalmon,
+          elevation: 0.0,
           title: Text('Username', style: kAppBarTextStyle),
           centerTitle: true,
           iconTheme: IconThemeData(color: kBrown),
         ),
         body: Container(
-          color: kDodgerBlue,
           padding: EdgeInsets.symmetric(horizontal: 40),
           child: Center(
             child: InfoEditingCard(

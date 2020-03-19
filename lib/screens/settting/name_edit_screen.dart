@@ -13,7 +13,10 @@ class NameEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: kSalmon,
         appBar: AppBar(
+          backgroundColor: kSalmon,
+          elevation: 0.0,
           title: Text('Name', style: kAppBarTextStyle),
           centerTitle: true,
           iconTheme: IconThemeData(color: kBrown),

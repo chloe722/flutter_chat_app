@@ -71,7 +71,7 @@ const kTextFieldSettingDecoration = InputDecoration(
 //  ),
 );
 
-const kAppBarTextStyle = TextStyle(color: kBrown);
+const kAppBarTextStyle = TextStyle(color: kNavajowhite);
 
 const Color kBrown = Color(0xFF5D4037);
 const Color kDodgerBlue = Color(0xFF36a5dd);

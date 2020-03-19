@@ -41,7 +41,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       child: Scaffold(
-        backgroundColor: kGreyBlack,
+        backgroundColor: kSalmon,
         appBar: AppBar(
           leading: null,
           title: Text(
@@ -49,9 +49,9 @@ class _ChatScreenState extends State<ChatScreen> {
             style: kAppBarTextStyle,
           ),
           actions: <Widget>[IconButton(icon: Icon(Icons.translate),onPressed: (){})],
-          iconTheme: IconThemeData(color: kBrown),
+          iconTheme: IconThemeData(color: kNavajowhite),
           centerTitle: true,
-          backgroundColor: kBlurYellow,
+          backgroundColor: kGreyBlack,
         ),
         body: Column(
           mainAxisSize: MainAxisSize.max,

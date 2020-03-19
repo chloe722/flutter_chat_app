@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/database.dart';
 import 'package:flash_chat/model/avaliable_users.dart';
 import 'package:flash_chat/model/user.dart';
@@ -14,6 +15,13 @@ class AddFriendScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kSalmon,
+        appBar: AppBar(
+          backgroundColor: kSalmon,
+          title: Text("Find people"),
+          elevation: 0.0,
+          centerTitle: true,
+        ),
         body: Container(
       child: StreamBuilder<List<AvailableUser>>(
           stream: getAvailableUsersList(user: user),

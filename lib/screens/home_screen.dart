@@ -42,16 +42,32 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController.jumpToPage(index);
   }
 
+  Widget _buildAppBarTitle(int index){
+
+    String _title = "";
+    if (_currentIndex == 0) {
+      _title = "Current Chats";
+    } else if (_currentIndex == 1) {
+      _title = "Friends";
+    }
+    return Text(_title);
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kSalmon,
         appBar: (_currentIndex == 2)
             ? PreferredSize(
                 preferredSize: Size(0.0, 0.0),
                 child: Container(),
               )
             : AppBar(
+                title: _buildAppBarTitle(_currentIndex),
+                centerTitle: true,
+                backgroundColor: kSalmon,
+                elevation: 0.0,
                 actions: <Widget>[
                   if (_currentIndex == 1)
                     IconButton(

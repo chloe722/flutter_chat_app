@@ -19,7 +19,10 @@ class StatusEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kSalmon,
       appBar: AppBar(
+        backgroundColor: kSalmon,
+        elevation: 0.0,
         title: Text('Status', style: kAppBarTextStyle),
         centerTitle: true,
         iconTheme: IconThemeData(color: kBrown),
@@ -27,7 +30,6 @@ class StatusEditScreen extends StatelessWidget {
       body: SingleChildScrollView(
         primary: true,
         child: Container(
-          color: kDodgerBlue,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[

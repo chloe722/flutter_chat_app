@@ -20,7 +20,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kDodgerBlue,
+      backgroundColor: kSalmon,
       body: Center(
         child: Column(
           children: <Widget>[

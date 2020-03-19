@@ -13,13 +13,15 @@ class AboutEditScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kSalmon,
         appBar: AppBar(
-          title: Text('Username', style: kAppBarTextStyle),
+          elevation: 0.0,
+          backgroundColor: kSalmon,
+          title: Text('About', style: kAppBarTextStyle),
           centerTitle: true,
           iconTheme: IconThemeData(color: kBrown),
         ),
         body: Container(
-          color: kDodgerBlue,
           padding: EdgeInsets.symmetric(horizontal: 40),
           child: Center(
             child: InfoEditingCard(
