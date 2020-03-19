@@ -22,7 +22,6 @@ class NameEditScreen extends StatelessWidget {
           iconTheme: IconThemeData(color: kBrown),
         ),
         body: Container(
-          color: kDodgerBlue,
           padding: EdgeInsets.symmetric(horizontal: 40),
           child: Center(
             child: InfoEditingCard(
