@@ -1,7 +1,10 @@
 
 # Flash Chat
-![Image](images/login.jpg)
-![Image](images/friend_requests.jpg)
+
+![](images/chat_app.gif)
+![](images/friends.png)
+![](images/profile.png)
+
 
 ## Status
 Developing
